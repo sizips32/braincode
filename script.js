@@ -463,7 +463,7 @@ const bibleStructure = {
         ]
       },
       pastoralAndGeneralEpistles: {
-        title: '개인/일반 서신서',
+        title: '목회 서신서',
         books: [
           { name: '디모데전서', info: '6장 113절' },
           { name: '디모데후서', info: '4장 83절' },

@@ -2,15 +2,15 @@
   "name": "bible-meditation-diary",
   "version": "1.0.0",
   "description": "성경 묵상 다이어리 애플리케이션",
-  "main": "script.js",
+  "main": "index.html",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "lite-server",
-    "start": "node script.js",
-    "build": "echo 'Build step completed'"
+    "start": "lite-server",
+    "build": "cp -r * ./"
   },
   "keywords": [],
   "author": "",

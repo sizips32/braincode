@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "lite-server",
     "start": "lite-server",
-    "build": "cp -r * ./"
+    "build": "echo 'Static site, no build required'"
   },
   "keywords": [],
   "author": "",

@@ -1196,18 +1196,18 @@ async function editPrayer(type, id) {
         <h3>${type === 'meditation' ? '🙏 묵상 기도 수정' : '✨ 중보 기도 수정'}</h3>
         <form id="editPrayerForm">
           <div class="form-group">
-            <label for="title">제목</label>
-            <input type="text" id="title" name="title" value="${escapeHtml(prayer.title)}" required>
+            <label for="prayerTitle">제목</label>
+            <input type="text" id="prayerTitle" name="title" value="${prayer.title.replace(/"/g, '&quot;')}" required>
           </div>
           ${type === 'intercessory' ? `
             <div class="form-group">
               <label for="target">중보 대상</label>
-              <input type="text" id="target" name="target" value="${escapeHtml(prayer.target)}" required>
+              <input type="text" id="target" name="target" value="${prayer.target.replace(/"/g, '&quot;')}" required>
             </div>
           ` : ''}
           <div class="form-group">
             <label for="content">기도 내용</label>
-            <textarea id="content" name="content" required>${escapeHtml(prayer.content)}</textarea>
+            <textarea id="content" name="content" required>${prayer.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
           </div>
           <div class="form-actions">
             <button type="button" class="btn-cancel" onclick="closePrayerForm()">취소</button>
@@ -1225,7 +1225,7 @@ async function editPrayer(type, id) {
       
       const updatedPrayer = {
         ...prayer,
-        title: document.getElementById('title').value.trim(),
+        title: document.getElementById('prayerTitle').value.trim(),
         content: document.getElementById('content').value.trim(),
         updated_at: new Date().toISOString()
       };

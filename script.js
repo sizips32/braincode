@@ -1348,57 +1348,34 @@ function showMeditationFormWithBook(bookName) {
 
 async function saveMeditation(meditationData) {
   try {
-    const { data, error } = await supabase
-      .from('meditations')
-      .upsert([
-        {
-          ...meditationData,
-          meditation_prayer: document.getElementById('meditationPrayer').value,
-          intercessory_prayer: document.getElementById('intercessoryPrayer').value,
-          updated_at: new Date().toISOString()
-        }
-      ]);
-
-    if (error) throw error;
-    showNotification('묵상이 성공적으로 저장되었습니다.', 'success');
-    return data;
+    const meditations = loadMeditations();
+    const existingIndex = meditations.findIndex(m => m.date === meditationData.date);
+    
+    if (existingIndex !== -1) {
+      meditations[existingIndex] = meditationData;
+    } else {
+      meditations.push(meditationData);
+    }
+    
+    saveMeditationsToStorage();
+    showNotification('묵상이 저장되었습니다.', 'success');
+    return { data: meditationData, error: null };
   } catch (error) {
-    console.error('Error saving meditation:', error);
-    showNotification('묵상 저장 중 오류가 발생했습니다.', 'error');
-    throw error;
+    console.error('묵상 저장 중 오류:', error);
+    showNotification('저장 중 오류가 발생했습니다.', 'error');
+    return { data: null, error };
   }
 }
 
 async function loadMeditation(date) {
   try {
-    const { data, error } = await supabase
-      .from('meditations')
-      .select('*')
-      .eq('date', date)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {
-        // 데이터가 없는 경우
-        return null;
-      }
-      throw error;
-    }
-
-    if (data) {
-      // 기존 필드들 설정
-      // ... existing code ...
-      
-      // 새로운 필드들 설정
-      document.getElementById('meditationPrayer').value = data.meditation_prayer || '';
-      document.getElementById('intercessoryPrayer').value = data.intercessory_prayer || '';
-    }
-
-    return data;
+    const meditations = loadMeditations();
+    const meditation = meditations.find(m => m.date === date);
+    return { data: meditation || null, error: null };
   } catch (error) {
-    console.error('Error loading meditation:', error);
-    showNotification('묵상 불러오기 중 오류가 발생했습니다.', 'error');
-    throw error;
+    console.error('묵상 로드 중 오류:', error);
+    showNotification('로드 중 오류가 발생했습니다.', 'error');
+    return { data: null, error };
   }
 }
 

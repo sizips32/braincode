@@ -1170,6 +1170,13 @@ async function updatePrayerStatus(type, id, answered) {
   }
 }
 
+// HTML 이스케이프 함수 추가
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // 기도 수정 함수
 async function editPrayer(type, id) {
   try {
@@ -1190,17 +1197,17 @@ async function editPrayer(type, id) {
         <form id="editPrayerForm">
           <div class="form-group">
             <label for="title">제목</label>
-            <input type="text" id="title" name="title" value="${prayer.title}" required>
+            <input type="text" id="title" name="title" value="${escapeHtml(prayer.title)}" required>
           </div>
           ${type === 'intercessory' ? `
             <div class="form-group">
               <label for="target">중보 대상</label>
-              <input type="text" id="target" name="target" value="${prayer.target}" required>
+              <input type="text" id="target" name="target" value="${escapeHtml(prayer.target)}" required>
             </div>
           ` : ''}
           <div class="form-group">
             <label for="content">기도 내용</label>
-            <textarea id="content" name="content" required>${prayer.content}</textarea>
+            <textarea id="content" name="content" required>${escapeHtml(prayer.content)}</textarea>
           </div>
           <div class="form-actions">
             <button type="button" class="btn-cancel" onclick="closePrayerForm()">취소</button>
@@ -1218,13 +1225,13 @@ async function editPrayer(type, id) {
       
       const updatedPrayer = {
         ...prayer,
-        title: document.getElementById('title').value,
-        content: document.getElementById('content').value,
+        title: document.getElementById('title').value.trim(),
+        content: document.getElementById('content').value.trim(),
         updated_at: new Date().toISOString()
       };
       
       if (type === 'intercessory') {
-        updatedPrayer.target = document.getElementById('target').value;
+        updatedPrayer.target = document.getElementById('target').value.trim();
       }
       
       try {

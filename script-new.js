@@ -333,6 +333,17 @@ window.handleMeditationItemClick = (date) => {
     }
 };
 
+// 묵상 액션 핸들러 (수정/삭제)
+window.handleMeditationAction = (action, meditationId) => {
+    console.log('묵상 액션:', action, meditationId);
+
+    if (window.app) {
+        window.app.handleMeditationAction(action, meditationId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
 // 교회 이벤트 액션 핸들러
 window.handleChurchEventAction = (action, eventId = null) => {
     console.log('교회 이벤트 액션 호출됨:', action, eventId);

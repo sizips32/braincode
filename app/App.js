@@ -147,18 +147,30 @@ export class BibleMeditationApp {
     const container = document.querySelector('.meditation-container');
     const calendarContainer = document.querySelector('.calendar');
 
+    // 기존 교회 캘린더 숨기기
+    if (this.churchCalendar) {
+      this.churchCalendar.destroy();
+      this.churchCalendar = null;
+    }
+
     container.innerHTML = `
       <div class="meditation-calendar-container">
         <div class="meditation-calendar-header">
           <h2>📖 묵상 달력</h2>
           <p class="meditation-calendar-description">
-            날짜를 클릭하면 성경 목록 페이지로 이동하여 해당 날짜의 묵상을 작성할 수 있습니다.
+            날짜를 클릭하면 해당 날짜의 묵상을 바로 작성할 수 있습니다.
           </p>
         </div>
         <div class="meditation-calendar-actions">
           <button class="btn-new-meditation" onclick="handleHomeAction('new-meditation')">
             <i class="fas fa-plus"></i> 새 묵상 작성
           </button>
+        </div>
+        <div class="meditation-list-section">
+          <h3>📝 등록된 묵상 목록</h3>
+          <div class="meditation-list" id="calendarMeditationList">
+            ${this.getCalendarMeditationListHTML()}
+          </div>
         </div>
       </div>
     `;
@@ -168,12 +180,9 @@ export class BibleMeditationApp {
     if (!this.calendar) {
       this.calendar = new Calendar(calendarContainer, {
         onDateSelect: (date) => {
-          // 날짜 클릭 시 성경 목록 페이지로 이동
-          this.navigateToView('bible-list', null);
-          // 잠시 후 해당 날짜의 묵상 폼 표시
-          setTimeout(() => {
-            this.showMeditationForm(date);
-          }, 100);
+          console.log('묵상 달력 날짜 클릭:', date);
+          // 날짜 클릭 시 해당 날짜의 묵상 폼 바로 표시 (새 묵상 작성과 동일)
+          this.showMeditationForm(date);
         },
         onMonthChange: () => this.updateCalendarMeditations()
       });
@@ -285,6 +294,12 @@ export class BibleMeditationApp {
     const container = document.querySelector('.meditation-container');
     const calendarContainer = document.querySelector('.calendar');
 
+    // 기존 묵상 캘린더 숨기기
+    if (this.calendar) {
+      this.calendar.destroy();
+      this.calendar = null;
+    }
+
     container.innerHTML = this.getChurchEventsViewHTML();
     calendarContainer.style.display = 'grid';
     calendarContainer.className = 'calendar'; // 기존 달력 스타일 적용
@@ -292,7 +307,10 @@ export class BibleMeditationApp {
     // ChurchEventCalendar 인스턴스 생성 또는 업데이트
     if (!this.churchCalendar) {
       this.churchCalendar = new ChurchEventCalendar(calendarContainer, {
-        onDateSelect: (date) => this.showChurchEventForm(date),
+        onDateSelect: (date) => {
+          console.log('교회 달력 날짜 클릭:', date);
+          this.showChurchEventForm(date);
+        },
         onMonthChange: () => this.updateChurchCalendarEvents()
       });
     }
@@ -336,11 +354,26 @@ export class BibleMeditationApp {
   }
 
   // 묵상 폼 표시
-  showMeditationForm(date = null, bookName = null) {
+  showMeditationForm(date = null, bookName = null, doctrineId = null, prophecyId = null, meditationId = null) {
     const modal = document.querySelector('.meditation-modal');
     if (!modal) return;
 
     modal.style.display = 'flex';
+
+    // 기존 묵상 편집인 경우
+    if (meditationId) {
+      const meditation = this.meditationModel.getById(meditationId);
+      if (meditation) {
+        document.getElementById('meditationDate').value = meditation.date;
+        this.populateMeditationForm(meditation);
+        // 숨겨진 필드에 ID 저장
+        const hiddenIdField = document.getElementById('meditationId');
+        if (hiddenIdField) {
+          hiddenIdField.value = meditationId;
+        }
+        return;
+      }
+    }
 
     if (date) {
       document.getElementById('meditationDate').value = date;
@@ -359,6 +392,12 @@ export class BibleMeditationApp {
 
     if (bookName) {
       document.getElementById('bibleReference').value = bookName;
+    }
+
+    // 숨겨진 필드 초기화
+    const hiddenIdField = document.getElementById('meditationId');
+    if (hiddenIdField) {
+      hiddenIdField.value = '';
     }
   }
 
@@ -390,6 +429,8 @@ export class BibleMeditationApp {
   // 묵상 제출 처리
   handleMeditationSubmit(event) {
     const formData = new FormData(event.target);
+    const meditationId = formData.get('meditationId');
+
     const meditationData = {
       date: formData.get('date'),
       bibleReference: formData.get('bibleReference'),
@@ -400,7 +441,17 @@ export class BibleMeditationApp {
       express: formData.get('express')
     };
 
-    if (this.meditationModel.saveMeditation(meditationData)) {
+    let success = false;
+
+    if (meditationId) {
+      // 기존 묵상 수정
+      success = this.meditationModel.updateMeditation(parseInt(meditationId), meditationData);
+    } else {
+      // 새 묵상 저장
+      success = this.meditationModel.saveMeditation(meditationData);
+    }
+
+    if (success) {
       this.closeMeditationForm();
 
       // 달력 업데이트
@@ -410,6 +461,33 @@ export class BibleMeditationApp {
 
       // 현재 뷰 새로고침
       this.refreshCurrentView();
+    }
+  }
+
+  // 묵상 액션 처리 (수정/삭제)
+  handleMeditationAction(action, meditationId) {
+    const meditation = this.meditationModel.getById(meditationId);
+    if (!meditation) {
+      notificationManager.error('묵상을 찾을 수 없습니다.');
+      return;
+    }
+
+    switch (action) {
+      case 'edit':
+        this.showMeditationForm(meditation.date, null, null, null, meditationId);
+        break;
+      case 'delete':
+        if (confirm('정말로 이 묵상을 삭제하시겠습니까?')) {
+          if (this.meditationModel.deleteMeditationById(meditationId)) {
+            // 달력 업데이트
+            if (this.calendar) {
+              this.updateCalendarMeditations();
+            }
+            // 현재 뷰 새로고침
+            this.refreshCurrentView();
+          }
+        }
+        break;
     }
   }
 
@@ -839,6 +917,39 @@ export class BibleMeditationApp {
         <td class="preview-cell">${Utils.truncateText(meditation.capture, 50)}</td>
       </tr>
     `;
+  }
+
+  // 묵상 달력용 묵상 리스트 HTML 생성
+  getCalendarMeditationListHTML() {
+    const meditations = this.meditationModel.getAll();
+
+    if (meditations.length === 0) {
+      return '<div class="no-meditations">등록된 묵상이 없습니다.</div>';
+    }
+
+    // 최근 순으로 정렬
+    const sortedMeditations = meditations.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    return sortedMeditations.map(meditation => `
+      <div class="meditation-item" data-id="${meditation.id}">
+        <div class="meditation-header">
+          <div class="meditation-date">${Utils.formatDate(meditation.date)}</div>
+          <div class="meditation-actions">
+            <button class="btn-edit" onclick="handleMeditationAction('edit', ${meditation.id})">
+              <i class="fas fa-edit"></i> 수정
+            </button>
+            <button class="btn-delete" onclick="handleMeditationAction('delete', ${meditation.id})">
+              <i class="fas fa-trash"></i> 삭제
+            </button>
+          </div>
+        </div>
+        <div class="meditation-content">
+          <div class="meditation-title">${Utils.escapeHtml(meditation.title)}</div>
+          <div class="meditation-reference">📖 ${Utils.escapeHtml(meditation.bibleReference)}</div>
+          <div class="meditation-summary">${Utils.truncateText(meditation.capture, 100)}</div>
+        </div>
+      </div>
+    `).join('');
   }
 
   // 교회 이벤트 목록 HTML
@@ -1430,17 +1541,32 @@ export class BibleMeditationApp {
     document.getElementById('eventTime').value = event.time || '';
     document.getElementById('eventCategory').value = event.category || '';
     document.getElementById('eventDescription').value = event.description || '';
+
+    // 숨겨진 필드에 이벤트 ID 설정
+    const eventIdField = document.getElementById('eventId');
+    if (eventIdField) {
+      eventIdField.value = event.id || '';
+    }
   }
 
   // 교회 이벤트 폼 초기화
   clearChurchEventForm() {
     const form = document.getElementById('churchEventForm');
-    if (form) form.reset();
+    if (form) {
+      form.reset();
+      // 숨겨진 필드 초기화
+      const eventIdField = document.getElementById('eventId');
+      if (eventIdField) {
+        eventIdField.value = '';
+      }
+    }
   }
 
   // 교회 이벤트 제출 처리
   handleChurchEventSubmit(event) {
     const formData = new FormData(event.target);
+    const eventId = formData.get('eventId');
+
     const eventData = {
       title: formData.get('title'),
       date: formData.get('date'),
@@ -1449,7 +1575,17 @@ export class BibleMeditationApp {
       description: formData.get('description')
     };
 
-    if (this.churchEventModel.saveEvent(eventData)) {
+    let success = false;
+
+    if (eventId) {
+      // 기존 이벤트 수정
+      success = this.churchEventModel.updateEvent(parseInt(eventId), eventData);
+    } else {
+      // 새 이벤트 저장
+      success = this.churchEventModel.saveEvent(eventData);
+    }
+
+    if (success) {
       this.closeChurchEventForm();
       this.updateChurchCalendarEvents();
       this.refreshCurrentView();

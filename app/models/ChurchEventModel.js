@@ -86,6 +86,31 @@ export class ChurchEventModel {
         return false;
     }
 
+    // 이벤트 수정
+    updateEvent(id, eventData) {
+        if (!this.validateEvent(eventData)) {
+            return false;
+        }
+
+        const index = this.events.findIndex(event => event.id === id);
+        if (index !== -1) {
+            this.events[index] = {
+                ...this.events[index],
+                ...eventData,
+                updatedAt: new Date().toISOString()
+            };
+
+            if (this.save()) {
+                notificationManager.success('교회 일정이 수정되었습니다.');
+                return true;
+            } else {
+                notificationManager.error('수정 중 오류가 발생했습니다.');
+                return false;
+            }
+        }
+        return false;
+    }
+
     // 이벤트 검색
     search(query) {
         const lowerQuery = query.toLowerCase();

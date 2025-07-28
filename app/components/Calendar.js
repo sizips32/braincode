@@ -96,17 +96,17 @@ export class Calendar {
 
     dayConfigs.forEach((config) => {
       const dayName = Utils.createElement('div', `weekday ${config.class}`);
-      
+
       const mainText = Utils.createElement('div', 'weekday-main');
       mainText.textContent = config.main;
       dayName.appendChild(mainText);
-      
+
       if (config.sub) {
         const subText = Utils.createElement('div', 'weekday-sub');
         subText.textContent = config.sub;
         dayName.appendChild(subText);
       }
-      
+
       daysHeader.appendChild(dayName);
     });
 
@@ -207,16 +207,7 @@ export class Calendar {
 
     this.selectedDate = dateStr;
 
-    // 묵상 페이지로 이동
-    if (window.app) {
-      window.app.navigateToView('bible-list', null);
-      // 잠시 후 해당 날짜의 묵상 폼 표시
-      setTimeout(() => {
-        window.app.showMeditationForm(dateStr);
-      }, 100);
-    }
-
-    // 콜백 호출
+    // 콜백 호출 (App.js에서 처리)
     if (this.options.onDateSelect) {
       this.options.onDateSelect(dateStr);
     }

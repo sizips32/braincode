@@ -27,6 +27,11 @@ export class MeditationModel {
         return this.meditations.find(m => m.date === date) || null;
     }
 
+    // ID별 묵상 조회
+    getById(id) {
+        return this.meditations.find(m => m.id === id) || null;
+    }
+
     // 성경별 묵상 조회
     getByBible(bibleName) {
         return this.meditations.filter(m =>
@@ -77,7 +82,7 @@ export class MeditationModel {
         }
     }
 
-    // 묵상 삭제
+    // 묵상 삭제 (날짜 기준)
     deleteMeditation(date) {
         try {
             const initialLength = this.meditations.length;
@@ -94,6 +99,62 @@ export class MeditationModel {
         } catch (error) {
             console.error('묵상 삭제 오류:', error);
             notificationManager.error('삭제 중 오류가 발생했습니다.');
+            return false;
+        }
+    }
+
+    // 묵상 삭제 (ID 기준)
+    deleteMeditationById(id) {
+        try {
+            const initialLength = this.meditations.length;
+            this.meditations = this.meditations.filter(m => m.id !== id);
+
+            if (this.meditations.length < initialLength) {
+                if (this.save()) {
+                    notificationManager.success('묵상이 삭제되었습니다.');
+                    return true;
+                }
+            }
+
+            throw new Error('삭제할 묵상을 찾을 수 없습니다.');
+        } catch (error) {
+            console.error('묵상 삭제 오류:', error);
+            notificationManager.error('삭제 중 오류가 발생했습니다.');
+            return false;
+        }
+    }
+
+    // 묵상 수정
+    updateMeditation(id, meditationData) {
+        try {
+            // 데이터 검증
+            if (!this.validateMeditation(meditationData)) {
+                throw new Error('묵상 데이터가 유효하지 않습니다.');
+            }
+
+            const index = this.meditations.findIndex(m => m.id === id);
+            if (index === -1) {
+                throw new Error('수정할 묵상을 찾을 수 없습니다.');
+            }
+
+            this.meditations[index] = {
+                ...this.meditations[index],
+                ...meditationData,
+                updatedAt: new Date().toISOString()
+            };
+
+            // 최신순으로 정렬
+            this.meditations.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (this.save()) {
+                notificationManager.success('묵상이 성공적으로 수정되었습니다.');
+                return true;
+            } else {
+                throw new Error('수정에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('묵상 수정 오류:', error);
+            notificationManager.error('수정 중 오류가 발생했습니다.');
             return false;
         }
     }

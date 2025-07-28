@@ -1,448 +1,466 @@
 /* Reset & Base Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background-color: #f5f5f5;
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f5f5;
 }
 
 /* Layout */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 /* Header */
 .header {
-    background-color: #fff;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    text-align: center;
+  background-color: #fff;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .header h1 {
-    font-size: 1.5rem;
-    color: #333;
+  font-size: 1.5rem;
+  color: #333;
 }
 
 /* Navigation */
 .nav {
-    background-color: #fff;
-    padding: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #fff;
+  padding: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-list {
-    list-style: none;
-    display: flex;
-    justify-content: space-around;
-    max-width: 600px;
-    margin: 0 auto;
+  list-style: none;
+  display: flex;
+  justify-content: space-around;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .nav-link {
-    text-decoration: none;
-    color: #666;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
+  text-decoration: none;
+  color: #666;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .nav-link:hover,
 .nav-link.active {
-    color: #1a73e8;
-    background-color: #f1f3f4;
+  color: #1a73e8;
+  background-color: #f1f3f4;
 }
 
 /* 현재 뷰 표시기 스타일 */
 .current-view-indicator {
-    font-size: 0.85em;
-    color: #666;
-    opacity: 0;
-    animation: fadeIn 0.5s forwards;
+  font-size: 0.85em;
+  color: #666;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* 메뉴 클릭 효과 */
 .nav-click-effect {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 5px;
-    height: 5px;
-    background-color: rgba(26, 115, 232, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: clickRipple 0.5s forwards;
-    pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background-color: rgba(26, 115, 232, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: clickRipple 0.5s forwards;
+  pointer-events: none;
 }
 
 @keyframes clickRipple {
-    0% {
-        width: 5px;
-        height: 5px;
-        opacity: 1;
-    }
-    100% {
-        width: 150px;
-        height: 150px;
-        opacity: 0;
-    }
+  0% {
+    width: 5px;
+    height: 5px;
+    opacity: 1;
+  }
+
+  100% {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+  }
 }
 
 /* 활성화된 메뉴 항목 표시 개선 */
 .nav-link.active {
-    position: relative;
-    font-weight: 600;
+  position: relative;
+  font-weight: 600;
 }
 
 .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background-color: #1a73e8;
-    animation: slideIn 0.3s forwards;
-    transform-origin: left;
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #1a73e8;
+  animation: slideIn 0.3s forwards;
+  transform-origin: left;
 }
 
 @keyframes slideIn {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
 }
 
 /* Calendar */
 .calendar-controls {
-    text-align: center;
-    margin-bottom: 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
 }
 
 .calendar {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    padding: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .calendar-header button {
-    background: #f8f9fa;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+  background: #f8f9fa;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .calendar-header button:hover {
-    background: #e9ecef;
+  background: #e9ecef;
 }
 
 .calendar-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #343a40;
+  margin: 0;
+  font-size: 1.5rem;
+  color: #343a40;
 }
 
 .calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .day-name {
-    text-align: center;
-    font-weight: bold;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 5px;
 }
 
 .day-name.sunday {
-    color: #dc3545;
+  color: #dc3545;
 }
 
 .day-name.saturday {
-    color: #1971c2;
+  color: #1971c2;
 }
 
 .calendar-day {
-    text-align: center;
-    padding: 15px 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    position: relative;
+  text-align: center;
+  padding: 15px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  position: relative;
 }
 
 .calendar-day:hover {
-    background: #e9ecef;
+  background: #e9ecef;
 }
 
 .prev-month-day,
 .next-month-day {
-    color: #adb5bd;
+  color: #adb5bd;
 }
 
 .today {
-    background: #e7f5ff;
-    color: #1971c2;
-    font-weight: bold;
-    border: 2px solid #1971c2;
-    box-shadow: 0 2px 4px rgba(25, 113, 194, 0.2);
+  background: #e7f5ff;
+  color: #1971c2;
+  font-weight: bold;
+  border: 2px solid #1971c2;
+  box-shadow: 0 2px 4px rgba(25, 113, 194, 0.2);
 }
 
 .meditation-indicator {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    font-size: 0.9em;
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  font-size: 0.9em;
 }
 
 .selected {
-    background: #339af0;
-    color: white;
+  background: #339af0;
+  color: white;
 }
 
 .selected:hover {
-    background: #1c7ed6;
+  background: #1c7ed6;
 }
 
 .calendar-day.sunday {
-    color: #dc3545;
+  color: #dc3545;
 }
 
 .calendar-day.saturday {
-    color: #1971c2;
+  color: #1971c2;
 }
 
 .prev-month-day.sunday,
 .next-month-day.sunday {
-    color: #ff8787;
+  color: #ff8787;
 }
 
 .prev-month-day.saturday,
 .next-month-day.saturday {
-    color: #74c0fc;
+  color: #74c0fc;
 }
 
 /* 반응형 스타일 */
 @media (max-width: 768px) {
-    .calendar {
-        padding: 10px;
-    }
+  .calendar {
+    padding: 10px;
+  }
 
-    .calendar-day {
-        padding: 10px 5px;
-        font-size: 0.9rem;
-    }
+  .calendar-day {
+    padding: 10px 5px;
+    font-size: 0.9rem;
+  }
 
-    .calendar-header h2 {
-        font-size: 1.2rem;
-    }
+  .calendar-header h2 {
+    font-size: 1.2rem;
+  }
 
-    .calendar-header button {
-        padding: 6px 12px;
-        font-size: 14px;
-    }
+  .calendar-header button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
 }
 
 /* Form */
 .meditation-form-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .meditation-form {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .form-title {
-    margin-bottom: 1.5rem;
-    text-align: center;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
 }
 
 .form-group input,
 .form-group textarea {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
 .form-group textarea {
-    height: 100px;
-    resize: vertical;
+  height: 100px;
+  resize: vertical;
 }
 
 .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn-save,
 .btn-cancel {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .btn-save {
-    background-color: #1a73e8;
-    color: #fff;
+  background-color: #1a73e8;
+  color: #fff;
 }
 
 .btn-save:hover {
-    background-color: #1557b0;
+  background-color: #1557b0;
 }
 
 .btn-cancel {
-    background-color: #f1f3f4;
-    color: #666;
+  background-color: #f1f3f4;
+  color: #666;
 }
 
 .btn-cancel:hover {
-    background-color: #e0e0e0;
+  background-color: #e0e0e0;
 }
 
 /* Meditation Card */
 .meditation-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 2rem;
-    margin: 1rem 0;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin: 1rem 0;
 }
 
 .meditation-header {
-    margin-bottom: 2rem;
-    text-align: center;
+  margin-bottom: 2rem;
+  text-align: center;
 }
 
 .meditation-header h3 {
-    font-size: 1.5rem;
-    color: #1a73e8;
-    margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #1a73e8;
+  margin-bottom: 1rem;
 }
 
 .bible-reference {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 0.5rem;
 }
 
 .meditation-date {
-    color: #888;
-    font-size: 0.9rem;
+  color: #888;
+  font-size: 0.9rem;
 }
 
 .meditation-section {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .meditation-section h4 {
-    color: #1a73e8;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
+  color: #1a73e8;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
 }
 
 .meditation-section p {
-    color: #333;
-    line-height: 1.6;
-    white-space: pre-line;
+  color: #333;
+  line-height: 1.6;
+  white-space: pre-line;
 }
 
 .meditation-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .btn-edit,
 .btn-delete {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
 .btn-edit {
-    background-color: #1a73e8;
-    color: #fff;
+  background-color: #1a73e8;
+  color: #fff;
 }
 
 .btn-edit:hover {
-    background-color: #1557b0;
+  background-color: #1557b0;
 }
 
 .btn-delete {
-    background-color: #dc3545;
-    color: #fff;
+  background-color: #dc3545;
+  color: #fff;
 }
 
 .btn-delete:hover {
-    background-color: #c82333;
+  background-color: #c82333;
 }
 
 /* Search View */
@@ -470,7 +488,7 @@ body {
 .search-form input:focus {
   outline: none;
   border-color: #1a73e8;
-  box-shadow: 0 0 0 2px rgba(26,115,232,0.1);
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
 }
 
 .search-form button {
@@ -522,7 +540,7 @@ body {
 
 .meditation-list-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-color: #1a73e8;
 }
 
@@ -579,8 +597,9 @@ body {
   background-color: #fff;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  min-width: 0; /* Flexbox 버그 수정 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  min-width: 0;
+  /* Flexbox 버그 수정 */
 }
 
 .testament-section h2 {
@@ -604,14 +623,14 @@ body {
   padding: 0.4rem 1rem;
   border-radius: 20px;
   margin-top: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .testament-info:hover {
   background-color: #e8f0fe;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .bible-categories {
@@ -624,13 +643,13 @@ body {
   background-color: #f8f9fa;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
 .bible-category:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .bible-category h3 {
@@ -689,7 +708,7 @@ body {
   background-color: #e8f0fe;
   border-color: #1a73e8;
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 4px 8px rgba(26,115,232,0.15);
+  box-shadow: 0 4px 8px rgba(26, 115, 232, 0.15);
 }
 
 .bible-book:hover .book-name {
@@ -768,7 +787,7 @@ body {
   background-color: #fff;
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .book-header {
@@ -935,7 +954,7 @@ body {
   padding: 1rem;
   margin-bottom: 2rem;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .server-notice p {
@@ -955,7 +974,7 @@ body {
   padding: 2rem;
   background: linear-gradient(135deg, #e8f0fe 0%, #f8f9fa 100%);
   border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .welcome-section h2 {
@@ -984,14 +1003,14 @@ body {
 .code-card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .code-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
 }
 
 .code-header {
@@ -1160,7 +1179,7 @@ body {
   background: white;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .recent-meditations-table th {
@@ -1267,6 +1286,101 @@ body {
   margin-top: 0.5rem;
 }
 
+/* Prayer Tabs */
+.prayer-tabs {
+  display: flex;
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.prayer-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: calc(var(--border-radius) - 2px);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-color);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.prayer-tab-btn:hover {
+  background: #f8f9fa;
+  color: var(--primary-color);
+}
+
+.prayer-tab-btn.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
+}
+
+.tab-count {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.prayer-tab-btn:not(.active) .tab-count {
+  background: #e9ecef;
+  color: #6c757d;
+}
+
+/* Tab Content */
+.prayer-tab-content {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.prayer-tab-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.prayer-tab-header h3 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.prayer-tab-description {
+  color: var(--secondary-color);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.prayer-tab-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.prayer-tab-stats .prayer-stat-item {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+}
+
+.prayer-tab-stats .stat-number {
+  font-size: 2rem;
+}
+
 /* Prayer Actions */
 .prayer-actions {
   margin: 2rem 0;
@@ -1296,12 +1410,13 @@ body {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  justify-content: center;
 }
 
 .filter-btn {
-  background: none;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  color: #6c757d;
   padding: 0.5rem 1.5rem;
   border-radius: var(--border-radius);
   cursor: pointer;
@@ -1452,32 +1567,42 @@ body {
 
 /* Responsive Styles */
 @media (max-width: 768px) {
+  .prayer-tabs {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .prayer-tab-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .prayer-tab-stats {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
   .prayer-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .prayer-filters {
     flex-wrap: wrap;
   }
-  
+
   .filter-btn {
     flex: 1;
     text-align: center;
   }
-  
+
   .prayer-item {
     padding: 16px;
   }
-  
+
   .prayer-item-header {
     flex-direction: column;
   }
-  
-  .prayer-item-actions {
-    margin-top: 12px;
-    justify-content: flex-end;
-  }
-  
+
   .prayer-meta {
     gap: 8px;
   }
@@ -1511,6 +1636,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -1524,7 +1650,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1537,7 +1663,7 @@ body {
   border-radius: var(--border-radius);
   width: 90%;
   max-width: 600px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -1594,7 +1720,8 @@ body {
 }
 
 /* 묵상 모달 스타일 */
-.meditation-modal {
+.meditation-modal,
+.church-event-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -1605,6 +1732,325 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+
+/* 교회 이벤트 관련 스타일 */
+.church-events-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.church-events-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.church-events-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.church-events-description {
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.church-events-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-item {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1a73e8;
+  margin-bottom: 0.5rem;
+}
+
+.stat-title {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.church-events-actions {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.btn-new-event {
+  background: #1a73e8;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-new-event:hover {
+  background: #1557b0;
+}
+
+.church-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.church-event-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.church-event-item:hover {
+  transform: translateY(-2px);
+}
+
+.church-event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.church-event-title h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.church-event-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.church-event-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.church-event-actions button {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.church-event-actions .btn-edit:hover {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.church-event-actions .btn-delete:hover {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.church-event-content {
+  color: #666;
+  line-height: 1.6;
+}
+
+.no-events {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.no-events p {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* 교회 달력 요일 스타일 */
+.calendar-weekdays .weekday {
+  font-weight: 600;
+  color: #333;
+  padding: 0.5rem 0.3rem;
+  text-align: center;
+  min-height: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.1rem;
+}
+
+.weekday-main {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.weekday-sub {
+  font-size: 0.65rem;
+  font-weight: 500;
+  line-height: 1;
+  color: #666;
+  opacity: 0.8;
+}
+
+.calendar-weekdays .weekday.sunday .weekday-main {
+  color: #d32f2f;
+}
+
+.calendar-weekdays .weekday.saturday .weekday-main {
+  color: #1976d2;
+}
+
+.calendar-weekdays .weekday.sunday .weekday-sub {
+  color: #d32f2f;
+  opacity: 0.7;
+}
+
+.calendar-weekdays .weekday.saturday .weekday-sub {
+  color: #1976d2;
+  opacity: 0.7;
+}
+
+/* 모바일에서 요일 텍스트 조정 */
+@media (max-width: 768px) {
+  .calendar-weekdays .weekday {
+    padding: 0.3rem 0.2rem;
+    min-height: 2.5rem;
+  }
+
+  .weekday-main {
+    font-size: 0.9rem;
+  }
+
+  .weekday-sub {
+    font-size: 0.6rem;
+  }
+}
+
+/* 작은 화면에서 요일 텍스트 더 축소 */
+@media (max-width: 480px) {
+  .calendar-weekdays .weekday {
+    padding: 0.2rem 0.1rem;
+    min-height: 2.2rem;
+  }
+
+  .weekday-main {
+    font-size: 0.8rem;
+  }
+
+  .weekday-sub {
+    font-size: 0.55rem;
+  }
+}
+
+.event-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #1a73e8;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-day.has-events {
+  position: relative;
+}
+
+/* 교회 달력 일요일/토요일 스타일 */
+.calendar-day.sunday {
+  color: #d32f2f;
+}
+
+.calendar-day.saturday {
+  color: #1976d2;
+}
+
+.calendar-day.sunday:hover {
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.calendar-day.saturday:hover {
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+/* 교회 이벤트 폼 스타일 */
+.church-event-form {
+  background-color: white;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.church-event-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #eee;
+}
+
+.church-event-form-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .church-events-container {
+    padding: 1rem;
+  }
+
+  .church-events-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .church-event-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .church-event-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .church-event-actions {
+    align-self: flex-end;
+  }
 }
 
 .meditation-form {
@@ -1784,7 +2230,7 @@ body {
   --background-color: #f8f9fa;
   --text-color: #2c3e50;
   --border-radius: 8px;
-  --shadow: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 body {
@@ -1974,7 +2420,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1987,7 +2433,7 @@ body {
   border-radius: var(--border-radius);
   width: 90%;
   max-width: 600px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .form-group {
@@ -2049,6 +2495,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -2060,21 +2507,21 @@ body {
   .prayer-stats {
     grid-template-columns: 1fr;
   }
-  
+
   .prayer-filters {
     flex-wrap: wrap;
   }
-  
+
   .filter-btn {
     flex: 1;
     text-align: center;
   }
-  
+
   .prayer-item-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .prayer-meta {
     margin-top: 0.5rem;
   }
@@ -2202,13 +2649,122 @@ body {
     overflow-x: auto;
     white-space: nowrap;
   }
-  
+
   .prayer-table th,
   .prayer-table td {
     padding: 8px 10px;
   }
-  
+
   .prayer-table .prayer-actions {
     min-width: 120px;
   }
-} 
+}
+
+/* 알림 시스템 스타일 */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  pointer-events: none;
+}
+
+.notification {
+  background: white;
+  border-radius: 8px;
+  padding: 15px 25px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #333;
+  font-weight: 500;
+  max-width: 400px;
+  pointer-events: auto;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.notification.success {
+  background: #4CAF50;
+  color: white;
+  border-left: 4px solid #45a049;
+}
+
+.notification.error {
+  background: #f44336;
+  color: white;
+  border-left: 4px solid #d32f2f;
+}
+
+.notification.info {
+  background: #2196F3;
+  color: white;
+  border-left: 4px solid #1976D2;
+}
+
+.notification.warning {
+  background: #ff9800;
+  color: white;
+  border-left: 4px solid #f57c00;
+}
+
+.notification-enter {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.notification-exit {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+/* 성능 최적화를 위한 CSS */
+.calendar-day {
+  will-change: transform, background-color;
+  transform: translateZ(0);
+  /* GPU 가속 활성화 */
+}
+
+.calendar-day:hover {
+  transform: translateY(-2px) translateZ(0);
+}
+
+/* 애니메이션 최적화 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 반응형 최적화 */
+@media (max-width: 768px) {
+  .notification-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .notification {
+    max-width: none;
+    margin-bottom: 8px;
+    padding: 12px 20px;
+  }
+}

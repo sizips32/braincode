@@ -8,17 +8,31 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "lite-server",
-    "start": "lite-server",
-    "build": "echo 'Static site, no build required'"
+    "dev": "npx http-server -p 3000 -o -c-1 --cors",
+    "start": "npx http-server -p 3000 -o -c-1 --cors",
+    "build": "echo 'Static site, no build required'",
+    "serve": "python3 -m http.server 3000",
+    "serve-python": "python -m http.server 3000"
   },
-  "keywords": [],
+  "keywords": [
+    "bible",
+    "meditation",
+    "diary",
+    "christian",
+    "devotional"
+  ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@notionhq/client": "^2.3.0"
-  },
   "devDependencies": {
-    "lite-server": "^2.6.1"
-  }
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }

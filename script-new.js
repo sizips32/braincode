@@ -173,7 +173,7 @@ window.handlePrayerTabChange = (tabName) => {
 // 기도 폼 제출 핸들러
 window.handlePrayerSubmit = (event) => {
     console.log('기도 폼 제출됨');
-    
+
     if (window.app) {
         window.app.handlePrayerSubmit(event);
     } else {
@@ -184,9 +184,128 @@ window.handlePrayerSubmit = (event) => {
 // 기도 폼 닫기 핸들러
 window.closePrayerForm = () => {
     console.log('기도 폼 닫기');
-    
+
     if (window.app) {
         window.app.closePrayerForm();
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 탭 전환 핸들러
+window.handleDoctrineTabChange = (tabName) => {
+    console.log('교리 탭 전환:', tabName);
+
+    if (window.app) {
+        window.app.showDoctrineTab(tabName);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 클릭 핸들러
+window.handleDoctrineClick = (doctrineId) => {
+    console.log('교리 클릭:', doctrineId);
+
+    if (window.app) {
+        window.app.showDoctrineDetail(doctrineId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+
+
+// 교리에서 묵상 기도하기 핸들러
+window.handleDoctrinePrayer = (doctrineId, event) => {
+    event.stopPropagation();
+    console.log('교리에서 묵상 기도하기:', doctrineId);
+
+    if (window.app) {
+        const doctrine = window.app.doctrineModel.getById(doctrineId);
+        if (doctrine) {
+            window.app.navigateToView('prayer');
+            setTimeout(() => {
+                window.app.showPrayerForm('meditation');
+                // 기도 내용에 교리 정보 추가
+                const contentField = document.getElementById('prayerContent');
+                if (contentField) {
+                    contentField.value = `[${doctrine.title}] ${doctrine.content}\n\n`;
+                }
+            }, 100);
+        }
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 예언 액션 핸들러
+window.handleProphecyAction = (action, prophecyId = null) => {
+    console.log('예언 액션 호출됨:', action, prophecyId);
+
+    if (window.app) {
+        window.app.handleProphecyAction(action, prophecyId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 예언 폼 제출 핸들러
+window.handleProphecySubmit = (event) => {
+    console.log('예언 폼 제출됨');
+
+    if (window.app) {
+        window.app.handleProphecySubmit(event);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 예언 폼 닫기 핸들러
+window.closeProphecyForm = () => {
+    console.log('예언 폼 닫기');
+
+    if (window.app) {
+        window.app.closeProphecyForm();
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 예언에서 묵상하기 핸들러
+window.handleProphecyMeditation = (prophecyId) => {
+    console.log('예언에서 묵상하기:', prophecyId);
+
+    if (window.app) {
+        const prophecy = window.app.prophecyModel.getById(prophecyId);
+        if (prophecy) {
+            window.app.navigateToView('bible-list');
+            setTimeout(() => {
+                window.app.showMeditationForm(null, null, null, prophecyId);
+            }, 100);
+        }
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 예언에서 기도하기 핸들러
+window.handleProphecyPrayer = (prophecyId) => {
+    console.log('예언에서 기도하기:', prophecyId);
+
+    if (window.app) {
+        const prophecy = window.app.prophecyModel.getById(prophecyId);
+        if (prophecy) {
+            window.app.navigateToView('prayer');
+            setTimeout(() => {
+                window.app.showPrayerForm('meditation');
+                // 기도 내용에 예언 정보 추가
+                const contentField = document.getElementById('prayerContent');
+                if (contentField) {
+                    contentField.value = `[${prophecy.title}] ${prophecy.content}\n\n`;
+                }
+            }, 100);
+        }
     } else {
         console.error('앱이 초기화되지 않았습니다.');
     }

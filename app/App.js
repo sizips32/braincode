@@ -7,6 +7,8 @@ import { ChurchEventModel } from './models/ChurchEventModel.js';
 import { Calendar } from './components/Calendar.js';
 import { ChurchEventCalendar } from './components/ChurchEventCalendar.js';
 import { generateBibleListHTML } from './data/bibleData.js';
+import { DoctrineModel } from './models/DoctrineModel.js';
+import { ProphecyModel } from './models/ProphecyModel.js';
 
 export class BibleMeditationApp {
   constructor() {
@@ -16,10 +18,13 @@ export class BibleMeditationApp {
     this.intercessoryPrayerModel = new PrayerModel('intercessory');
     this.representativePrayerModel = new RepresentativePrayerModel();
     this.churchEventModel = new ChurchEventModel();
+    this.doctrineModel = new DoctrineModel();
+    this.prophecyModel = new ProphecyModel();
     this.calendar = null;
     this.churchCalendar = null;
     this.currentMeditation = null;
     this.currentPrayerTab = 'meditation'; // 기본 탭
+    this.currentDoctrineTab = 'doctrines'; // 기본 탭
 
     this.init();
   }
@@ -114,6 +119,10 @@ export class BibleMeditationApp {
       case 'church-events':
         console.log('교회 행사와 사역 뷰로 이동');
         this.showChurchEventsView();
+        break;
+      case 'doctrine':
+        console.log('교리 뷰로 이동');
+        this.showDoctrineView();
         break;
       default:
         console.log('알 수 없는 뷰:', view);
@@ -289,6 +298,41 @@ export class BibleMeditationApp {
     }
 
     this.updateChurchCalendarEvents();
+  }
+
+  // 교리 뷰 표시
+  showDoctrineView() {
+    const container = document.querySelector('.meditation-container');
+    const calendar = document.querySelector('.calendar');
+
+    if (calendar) calendar.style.display = 'none';
+
+    container.innerHTML = this.getDoctrineViewHTML();
+    this.showDoctrineTab(this.currentDoctrineTab);
+  }
+
+  // 교리 탭 전환
+  showDoctrineTab(tabName) {
+    this.currentDoctrineTab = tabName;
+
+    // 탭 버튼 활성화 상태 업데이트
+    document.querySelectorAll('.doctrine-tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+
+    // 탭 내용 업데이트
+    const tabContent = document.getElementById('doctrineTabContent');
+    if (!tabContent) return;
+
+    switch (tabName) {
+      case 'doctrines':
+        tabContent.innerHTML = this.getDoctrinesTabHTML();
+        break;
+      case 'prophecy':
+        tabContent.innerHTML = this.getProphecyTabHTML();
+        break;
+    }
   }
 
   // 묵상 폼 표시
@@ -837,6 +881,170 @@ export class BibleMeditationApp {
     `).join('');
   }
 
+  // 교리 뷰 HTML 생성
+  getDoctrineViewHTML() {
+    return `
+      <div class="doctrine-container">
+        <div class="doctrine-header">
+          <h1><i class="fas fa-book-open"></i> 교리</h1>
+          <p>SDA(제칠일안식일예수재림교회)의 기본 교리를 학습하고 예언의 신을 기록하세요.</p>
+        </div>
+
+        <div class="doctrine-tabs">
+          <button class="doctrine-tab-btn active" data-tab="doctrines" onclick="handleDoctrineTabChange('doctrines')">
+            <i class="fas fa-list"></i> 28 기본교리
+            <span class="tab-count">28</span>
+          </button>
+          <button class="doctrine-tab-btn" data-tab="prophecy" onclick="handleDoctrineTabChange('prophecy')">
+            <i class="fas fa-eye"></i> 예언의 신
+            <span class="tab-count">${this.prophecyModel.getAll().length}</span>
+          </button>
+        </div>
+
+        <div id="doctrineTabContent" class="doctrine-tab-content">
+          <!-- 탭 내용이 여기에 동적으로 로드됩니다 -->
+        </div>
+      </div>
+    `;
+  }
+
+  // 28 기본교리 탭 HTML 생성
+  getDoctrinesTabHTML() {
+    const categories = this.doctrineModel.getCategories();
+
+    return `
+      <div class="doctrines-tab">
+        <div class="doctrines-header">
+          <h2>📖 SDA 28개 기본교리</h2>
+          <p>제칠일안식일예수재림교회의 핵심 교리를 분류별로 학습하세요.</p>
+        </div>
+
+        <div class="doctrines-categories">
+          ${categories.map(category => {
+      const doctrines = this.doctrineModel.getByCategory(category);
+      return `
+              <div class="doctrine-category">
+                <h3 class="category-title">${category}</h3>
+                <div class="doctrine-list">
+                  ${doctrines.map(doctrine => `
+                    <div class="doctrine-item" onclick="handleDoctrineClick(${doctrine.id})">
+                      <div class="doctrine-number">${doctrine.order}</div>
+                      <div class="doctrine-content">
+                        <h4 class="doctrine-title">${doctrine.title}</h4>
+                        <p class="doctrine-summary">${doctrine.content.substring(0, 100)}...</p>
+                        <div class="doctrine-actions">
+                          <button class="btn-prayer" onclick="handleDoctrinePrayer(${doctrine.id}, event)">
+                            <i class="fas fa-pray"></i> 묵상 기도
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+    }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // 예언의 신 탭 HTML 생성
+  getProphecyTabHTML() {
+    const prophecies = this.prophecyModel.getAll();
+    const stats = this.prophecyModel.getStats();
+
+    return `
+      <div class="prophecy-tab">
+        <div class="prophecy-header">
+          <h2>👁️ 예언의 신</h2>
+          <p>예언과 관련된 글과 출처를 기록하고 관리하세요.</p>
+          
+          <div class="prophecy-stats">
+            <div class="stat-item">
+              <i class="fas fa-file-alt"></i>
+              <span class="stat-number">${stats.total}</span>
+              <span class="stat-label">총 글</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-folder"></i>
+              <span class="stat-number">${stats.categories.length}</span>
+              <span class="stat-label">카테고리</span>
+            </div>
+            <div class="stat-item">
+              <i class="fas fa-clock"></i>
+              <span class="stat-number">${stats.recentCount}</span>
+              <span class="stat-label">최근 7일</span>
+            </div>
+          </div>
+
+          <button class="btn-new-prophecy" onclick="handleProphecyAction('new-prophecy')">
+            <i class="fas fa-plus"></i> 새 글 작성
+          </button>
+        </div>
+
+        <div class="prophecy-list" id="prophecyList">
+          ${this.getProphecyListHTML(prophecies)}
+        </div>
+      </div>
+    `;
+  }
+
+  // 예언 글 목록 HTML 생성
+  getProphecyListHTML(prophecies) {
+    if (!prophecies || prophecies.length === 0) {
+      return `
+        <div class="no-prophecies">
+          <i class="fas fa-eye-slash"></i>
+          <p>등록된 예언 글이 없습니다.</p>
+          <button class="btn-new-prophecy" onclick="handleProphecyAction('new-prophecy')">
+            <i class="fas fa-plus"></i> 첫 글 작성하기
+          </button>
+        </div>
+      `;
+    }
+
+    return prophecies.map(prophecy => `
+      <div class="prophecy-item" data-id="${prophecy.id}">
+        <div class="prophecy-header">
+          <h3 class="prophecy-title">${Utils.escapeHtml(prophecy.title)}</h3>
+          <div class="prophecy-actions">
+            <button class="btn-edit" onclick="handleProphecyAction('edit-prophecy', ${prophecy.id})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-delete" onclick="handleProphecyAction('delete-prophecy', ${prophecy.id})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="prophecy-meta">
+          <span class="prophecy-author"><i class="fas fa-user"></i> ${Utils.escapeHtml(prophecy.author || '저자 미상')}</span>
+          <span class="prophecy-category"><i class="fas fa-tag"></i> ${prophecy.category}</span>
+          <span class="prophecy-date"><i class="fas fa-calendar"></i> ${Utils.formatDate(new Date(prophecy.createdAt))}</span>
+        </div>
+        <div class="prophecy-content">
+          <p>${Utils.escapeHtml(prophecy.content.substring(0, 200))}${prophecy.content.length > 200 ? '...' : ''}</p>
+        </div>
+        <div class="prophecy-source">
+          <strong>출처:</strong> ${Utils.escapeHtml(prophecy.source)}
+        </div>
+        ${prophecy.tags && prophecy.tags.length > 0 ? `
+          <div class="prophecy-tags">
+            ${prophecy.tags.map(tag => `<span class="tag">${Utils.escapeHtml(tag)}</span>`).join('')}
+          </div>
+        ` : ''}
+        <div class="prophecy-actions-bottom">
+          <button class="btn-meditation" onclick="handleProphecyMeditation(${prophecy.id})">
+            <i class="fas fa-pen"></i> 묵상하기
+          </button>
+          <button class="btn-prayer" onclick="handleProphecyPrayer(${prophecy.id})">
+            <i class="fas fa-pray"></i> 기도하기
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
   // 이벤트 리스너 메서드들
   attachHomeViewEvents() {
     Utils.delegateEvent(document.body, '.action-btn', 'click', (event) => {
@@ -1265,6 +1473,161 @@ export class BibleMeditationApp {
           }
         }
         break;
+    }
+  }
+
+  // 교리 관련 액션 핸들러
+  handleDoctrineAction(action, doctrineId = null) {
+    switch (action) {
+      case 'view-doctrine':
+        this.showDoctrineDetail(doctrineId);
+        break;
+      case 'meditation-from-doctrine':
+        this.showMeditationForm(null, null, doctrineId);
+        break;
+      case 'prayer-from-doctrine':
+        this.showPrayerForm('meditation', doctrineId);
+        break;
+    }
+  }
+
+  // 예언 관련 액션 핸들러
+  handleProphecyAction(action, prophecyId = null) {
+    switch (action) {
+      case 'new-prophecy':
+        this.showProphecyForm();
+        break;
+      case 'edit-prophecy':
+        this.showProphecyForm(prophecyId);
+        break;
+      case 'delete-prophecy':
+        if (confirm('이 예언 글을 삭제하시겠습니까?')) {
+          if (this.prophecyModel.deleteProphecy(prophecyId)) {
+            this.refreshCurrentView();
+          }
+        }
+        break;
+      case 'meditation-from-prophecy':
+        this.showMeditationForm(null, null, null, prophecyId);
+        break;
+      case 'prayer-from-prophecy':
+        this.showPrayerForm('meditation', null, prophecyId);
+        break;
+    }
+  }
+
+  // 교리 상세 보기
+  showDoctrineDetail(doctrineId) {
+    const doctrine = this.doctrineModel.getById(doctrineId);
+    if (!doctrine) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'doctrine-detail-modal';
+    modal.innerHTML = `
+      <div class="doctrine-detail-content">
+        <div class="doctrine-detail-header">
+          <h2>${doctrine.title}</h2>
+          <button class="btn-close" onclick="this.closest('.doctrine-detail-modal').remove()">×</button>
+        </div>
+        <div class="doctrine-detail-body">
+          <div class="doctrine-category">카테고리: ${doctrine.category}</div>
+          <div class="doctrine-content">${doctrine.content}</div>
+          <div class="doctrine-reference">성경 구절: ${doctrine.reference}</div>
+        </div>
+        <div class="doctrine-detail-actions">
+          <button class="btn-prayer" onclick="handleDoctrinePrayer(${doctrine.id})">
+            <i class="fas fa-pray"></i> 묵상 기도
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // 예언 폼 표시
+  showProphecyForm(prophecyId = null) {
+    const modal = document.querySelector('.prophecy-modal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+
+    if (prophecyId) {
+      // 기존 예언 수정
+      const prophecy = this.prophecyModel.getById(prophecyId);
+      if (prophecy) {
+        this.populateProphecyForm(prophecy);
+      }
+    } else {
+      this.clearProphecyForm();
+    }
+  }
+
+  // 예언 폼 데이터 채우기
+  populateProphecyForm(prophecy) {
+    const form = document.getElementById('prophecyForm');
+    if (!form) return;
+
+    form.querySelector('#prophecyTitle').value = prophecy.title || '';
+    form.querySelector('#prophecyAuthor').value = prophecy.author || '';
+    form.querySelector('#prophecyCategory').value = prophecy.category || '일반';
+    form.querySelector('#prophecyContent').value = prophecy.content || '';
+    form.querySelector('#prophecySource').value = prophecy.source || '';
+    form.querySelector('#prophecyTags').value = prophecy.tags ? prophecy.tags.join(', ') : '';
+
+    const prophecyIdField = form.querySelector('#prophecyId');
+    if (prophecyIdField) {
+      prophecyIdField.value = prophecy.id || '';
+    }
+  }
+
+  // 예언 폼 초기화
+  clearProphecyForm() {
+    const form = document.getElementById('prophecyForm');
+    if (form) {
+      form.reset();
+      const prophecyIdField = form.querySelector('#prophecyId');
+      if (prophecyIdField) {
+        prophecyIdField.value = '';
+      }
+    }
+  }
+
+  // 예언 폼 닫기
+  closeProphecyForm() {
+    const modal = document.querySelector('.prophecy-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      this.clearProphecyForm();
+    }
+  }
+
+  // 예언 폼 제출 처리
+  handleProphecySubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const prophecyData = {
+      title: formData.get('title'),
+      author: formData.get('author'),
+      category: formData.get('category'),
+      content: formData.get('content'),
+      source: formData.get('source'),
+      tags: formData.get('tags') ? formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag) : []
+    };
+
+    // 기존 예언 수정인지 확인
+    const prophecyId = formData.get('prophecyId');
+    let success = false;
+
+    if (prophecyId) {
+      success = this.prophecyModel.updateProphecy(parseInt(prophecyId), prophecyData);
+    } else {
+      success = this.prophecyModel.saveProphecy(prophecyData);
+    }
+
+    if (success) {
+      this.closeProphecyForm();
+      this.refreshCurrentView();
     }
   }
 } 

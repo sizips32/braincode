@@ -3255,3 +3255,41 @@ body {
   color: #666;
   font-style: italic;
 }
+
+/* 묵상 리스트 푸터 스타일 */
+.meditation-list-footer {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  border-left: 4px solid #6c757d;
+}
+
+.meditation-count-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.displayed-count {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.total-count {
+  color: #666;
+  font-weight: 500;
+}
+
+.meditation-list-note {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.meditation-list-note i {
+  color: var(--primary-color);
+  margin-right: 0.3rem;
+}

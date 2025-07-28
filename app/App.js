@@ -919,10 +919,10 @@ export class BibleMeditationApp {
     `;
   }
 
-  // 묵상 달력용 묵상 리스트 HTML 생성
+    // 묵상 달력용 묵상 리스트 HTML 생성
   getCalendarMeditationListHTML() {
     const meditations = this.meditationModel.getAll();
-
+    
     if (meditations.length === 0) {
       return '<div class="no-meditations">등록된 묵상이 없습니다.</div>';
     }
@@ -930,7 +930,12 @@ export class BibleMeditationApp {
     // 최근 순으로 정렬
     const sortedMeditations = meditations.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    return sortedMeditations.map(meditation => `
+    // 최대 10개만 표시
+    const limitedMeditations = sortedMeditations.slice(0, 10);
+    const totalCount = meditations.length;
+    const displayedCount = limitedMeditations.length;
+
+    let html = limitedMeditations.map(meditation => `
       <div class="meditation-item" data-id="${meditation.id}">
         <div class="meditation-header">
           <div class="meditation-date">${Utils.formatDate(meditation.date)}</div>
@@ -950,6 +955,24 @@ export class BibleMeditationApp {
         </div>
       </div>
     `).join('');
+
+    // 전체 개수 표시 및 더보기 안내
+    if (totalCount > 10) {
+      html += `
+        <div class="meditation-list-footer">
+          <div class="meditation-count-info">
+            <span class="displayed-count">최근 ${displayedCount}개</span>
+            <span class="total-count">전체 ${totalCount}개</span>
+          </div>
+          <div class="meditation-list-note">
+            <i class="fas fa-info-circle"></i>
+            더 많은 묵상을 보려면 '검색' 메뉴를 이용하세요.
+          </div>
+        </div>
+      `;
+    }
+
+    return html;
   }
 
   // 교회 이벤트 목록 HTML

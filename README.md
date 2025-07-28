@@ -127,7 +127,7 @@ npm run serve    # Python HTTP 서버 사용
 ```
 
 ### **접속**
-브라우저에서 `http://localhost:3000` 접속
+브라우저에서 `http://localhost:5001` 접속
 
 ## 📱 사용법
 

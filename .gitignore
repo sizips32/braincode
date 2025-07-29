@@ -34,3 +34,16 @@ yarn-error.log*
 dist/
 build/ 
 .vercel
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Database files
+database/
+*.db
+*.sqlite
+*.sqlite3

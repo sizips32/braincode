@@ -3293,3 +3293,322 @@ body {
   color: var(--primary-color);
   margin-right: 0.3rem;
 }
+
+/* 교리 핵심 버튼 스타일 */
+.btn-core {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.btn-core:hover {
+  background-color: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-core-has-url {
+  background-color: #2196F3;
+}
+
+.btn-core-has-url:hover {
+  background-color: #1976D2;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.url-indicator {
+  background-color: #FFC107;
+  color: #333;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+/* 교리 URL 모달 스타일 */
+.doctrine-url-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.doctrine-url-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+.doctrine-url-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.doctrine-url-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.doctrine-url-header .btn-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.doctrine-url-header .btn-close:hover {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.doctrine-url-body {
+  padding: 20px 24px;
+}
+
+.doctrine-info {
+  margin-bottom: 20px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #2196F3;
+}
+
+.doctrine-info h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.doctrine-info p {
+  margin: 0;
+  color: #666;
+  font-size: 0.95em;
+}
+
+.url-input-group {
+  margin-bottom: 20px;
+}
+
+.url-input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+  font-size: 0.95em;
+}
+
+.url-input-group input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.url-input-group input:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.url-input-group small {
+  display: block;
+  margin-top: 6px;
+  color: #666;
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+
+.doctrine-url-actions {
+  padding: 16px 24px 20px;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.doctrine-url-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.doctrine-url-actions .btn-secondary {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.doctrine-url-actions .btn-secondary:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.doctrine-url-actions .btn-primary {
+  background-color: #2196F3;
+  color: white;
+}
+
+.doctrine-url-actions .btn-primary:hover {
+  background-color: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.doctrine-url-actions .btn-danger {
+  background-color: #f44336;
+  color: white;
+}
+
+.doctrine-url-actions .btn-danger:hover {
+  background-color: #d32f2f;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* 교리 상세 보기에서 URL 정보 표시 */
+.doctrine-url-info {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background-color: #e3f2fd;
+  border-radius: 6px;
+  border-left: 4px solid #2196F3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doctrine-url-info i {
+  color: #2196F3;
+  font-size: 1.1em;
+}
+
+.doctrine-url-link {
+  color: #1976D2;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.doctrine-url-link:hover {
+  color: #1565C0;
+  text-decoration: underline;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .doctrine-url-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .doctrine-url-header {
+    padding: 16px 20px 12px;
+  }
+
+  .doctrine-url-header h2 {
+    font-size: 1.2em;
+  }
+
+  .doctrine-url-body {
+    padding: 16px 20px;
+  }
+
+  .doctrine-url-actions {
+    padding: 12px 20px 16px;
+    flex-direction: column;
+  }
+
+  .doctrine-url-actions button {
+    width: 100%;
+  }
+
+  .btn-core {
+    padding: 6px 12px;
+    font-size: 0.85em;
+  }
+
+  .url-indicator {
+    width: 14px;
+    height: 14px;
+    font-size: 9px;
+  }
+}
+
+/* 상세 내용 버튼 스타일 */
+.btn-detail {
+  background-color: #FF9800;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.btn-detail:hover {
+  background-color: #F57C00;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.3);
+}
+
+.btn-detail-has-url {
+  background-color: #2196F3;
+}
+
+.btn-detail-has-url:hover {
+  background-color: #1976D2;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}

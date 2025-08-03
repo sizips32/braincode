@@ -302,6 +302,36 @@ export class DoctrineModel {
         return false;
     }
 
+    // 교리 상세 내용 URL 저장
+    saveDoctrineUrl(id, url) {
+        const index = this.doctrines.findIndex(doctrine => doctrine.id === id);
+        if (index !== -1) {
+            this.doctrines[index].coreUrl = url;
+            this.save();
+            notificationManager.showSuccess('교리 상세 내용 URL이 저장되었습니다.');
+            return true;
+        }
+        return false;
+    }
+
+    // 교리 상세 내용 URL 가져오기
+    getDoctrineUrl(id) {
+        const doctrine = this.getById(id);
+        return doctrine ? doctrine.coreUrl : null;
+    }
+
+    // 교리 상세 내용 URL 삭제
+    removeDoctrineUrl(id) {
+        const index = this.doctrines.findIndex(doctrine => doctrine.id === id);
+        if (index !== -1) {
+            delete this.doctrines[index].coreUrl;
+            this.save();
+            notificationManager.showSuccess('교리 상세 내용 URL이 삭제되었습니다.');
+            return true;
+        }
+        return false;
+    }
+
     resetToDefault() {
         this.doctrines = this.getDefaultDoctrines();
         this.save();

@@ -919,10 +919,10 @@ export class BibleMeditationApp {
     `;
   }
 
-    // 묵상 달력용 묵상 리스트 HTML 생성
+  // 묵상 달력용 묵상 리스트 HTML 생성
   getCalendarMeditationListHTML() {
     const meditations = this.meditationModel.getAll();
-    
+
     if (meditations.length === 0) {
       return '<div class="no-meditations">등록된 묵상이 없습니다.</div>';
     }
@@ -1060,20 +1060,24 @@ export class BibleMeditationApp {
               <div class="doctrine-category">
                 <h3 class="category-title">${category}</h3>
                 <div class="doctrine-list">
-                  ${doctrines.map(doctrine => `
+                  ${doctrines.map(doctrine => {
+        const hasUrl = this.doctrineModel.getDoctrineUrl(doctrine.id);
+        return `
                     <div class="doctrine-item" onclick="handleDoctrineClick(${doctrine.id})">
                       <div class="doctrine-number">${doctrine.order}</div>
                       <div class="doctrine-content">
                         <h4 class="doctrine-title">${doctrine.title}</h4>
                         <p class="doctrine-summary">${doctrine.content.substring(0, 100)}...</p>
                         <div class="doctrine-actions">
-                          <button class="btn-prayer" onclick="handleDoctrinePrayer(${doctrine.id}, event)">
-                            <i class="fas fa-pray"></i> 묵상 기도
+                          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id}, event)">
+                            <i class="fas fa-file-alt"></i> 상세 내용
+                            ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
                           </button>
                         </div>
                       </div>
                     </div>
-                  `).join('')}
+                  `;
+      }).join('')}
                 </div>
               </div>
             `;
@@ -1680,6 +1684,8 @@ export class BibleMeditationApp {
     const doctrine = this.doctrineModel.getById(doctrineId);
     if (!doctrine) return;
 
+    const hasUrl = this.doctrineModel.getDoctrineUrl(doctrineId);
+
     const modal = document.createElement('div');
     modal.className = 'doctrine-detail-modal';
     modal.innerHTML = `
@@ -1692,15 +1698,102 @@ export class BibleMeditationApp {
           <div class="doctrine-category">카테고리: ${doctrine.category}</div>
           <div class="doctrine-content">${doctrine.content}</div>
           <div class="doctrine-reference">성경 구절: ${doctrine.reference}</div>
+          ${hasUrl ? `<div class="doctrine-url-info">
+            <i class="fas fa-link"></i> 
+            <a href="${hasUrl}" target="_blank" class="doctrine-url-link">저장된 상세 자료 보기</a>
+          </div>` : ''}
         </div>
         <div class="doctrine-detail-actions">
-          <button class="btn-prayer" onclick="handleDoctrinePrayer(${doctrine.id})">
-            <i class="fas fa-pray"></i> 묵상 기도
+          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id})">
+            <i class="fas fa-file-alt"></i> 상세 내용
+            ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
           </button>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
+  }
+
+  // 교리 핵심 URL 입력 모달 표시
+  showDoctrineUrlModal(doctrineId) {
+    const doctrine = this.doctrineModel.getById(doctrineId);
+    if (!doctrine) return;
+
+    const currentUrl = this.doctrineModel.getDoctrineUrl(doctrineId);
+
+    const modal = document.createElement('div');
+    modal.className = 'doctrine-url-modal';
+    modal.innerHTML = `
+      <div class="doctrine-url-content">
+        <div class="doctrine-url-header">
+          <h2>교리 상세 내용 URL 설정</h2>
+          <button class="btn-close" onclick="this.closest('.doctrine-url-modal').remove()">×</button>
+        </div>
+        <div class="doctrine-url-body">
+          <div class="doctrine-info">
+            <h3>${doctrine.title}</h3>
+            <p>${doctrine.category}</p>
+          </div>
+          <div class="url-input-group">
+            <label for="doctrineUrl">교리 상세 내용 URL:</label>
+            <input type="url" id="doctrineUrl" placeholder="https://example.com" value="${currentUrl || ''}" />
+            <small>교리와 관련된 상세 자료의 URL을 입력하세요.</small>
+          </div>
+        </div>
+        <div class="doctrine-url-actions">
+          <button class="btn-secondary" onclick="this.closest('.doctrine-url-modal').remove()">취소</button>
+          ${currentUrl ? '<button class="btn-danger" onclick="handleDoctrineUrlDelete(' + doctrineId + ')">삭제</button>' : ''}
+          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">저장</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // 교리 상세 내용 URL 저장 처리
+  handleDoctrineUrlSave(doctrineId) {
+    const urlInput = document.getElementById('doctrineUrl');
+    const url = urlInput.value.trim();
+
+    if (!url) {
+      notificationManager.showError('URL을 입력해주세요.');
+      return;
+    }
+
+    // URL 유효성 검사
+    try {
+      new URL(url);
+    } catch (e) {
+      notificationManager.showError('올바른 URL 형식을 입력해주세요.');
+      return;
+    }
+
+    if (this.doctrineModel.saveDoctrineUrl(doctrineId, url)) {
+      // 모달 닫기
+      const modal = document.querySelector('.doctrine-url-modal');
+      if (modal) {
+        modal.remove();
+      }
+
+      // 교리 목록 새로고침
+      this.refreshCurrentView();
+    }
+  }
+
+  // 교리 상세 내용 URL 삭제 처리
+  handleDoctrineUrlDelete(doctrineId) {
+    if (confirm('저장된 URL을 삭제하시겠습니까?')) {
+      if (this.doctrineModel.removeDoctrineUrl(doctrineId)) {
+        // 모달 닫기
+        const modal = document.querySelector('.doctrine-url-modal');
+        if (modal) {
+          modal.remove();
+        }
+
+        // 교리 목록 새로고침
+        this.refreshCurrentView();
+      }
+    }
   }
 
   // 예언 폼 표시

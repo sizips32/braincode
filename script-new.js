@@ -51,6 +51,9 @@ function setupNavigationListeners() {
     console.log('설정할 네비게이션 링크:', navLinks.length);
 
     navLinks.forEach(link => {
+        // 기존 onclick 이벤트 제거
+        link.removeAttribute('onclick');
+
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const view = event.currentTarget.dataset.view;
@@ -234,6 +237,42 @@ window.handleDoctrinePrayer = (doctrineId, event) => {
                 }
             }, 100);
         }
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 상세 내용 URL 관리 핸들러
+window.handleDoctrineDetail = (doctrineId, event) => {
+    if (event) {
+        event.stopPropagation();
+    }
+    console.log('교리 상세 내용 URL 관리:', doctrineId);
+
+    if (window.app) {
+        window.app.showDoctrineUrlModal(doctrineId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 핵심 URL 저장 핸들러
+window.handleDoctrineUrlSave = (doctrineId) => {
+    console.log('교리 핵심 URL 저장:', doctrineId);
+
+    if (window.app) {
+        window.app.handleDoctrineUrlSave(doctrineId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 핵심 URL 삭제 핸들러
+window.handleDoctrineUrlDelete = (doctrineId) => {
+    console.log('교리 핵심 URL 삭제:', doctrineId);
+
+    if (window.app) {
+        window.app.handleDoctrineUrlDelete(doctrineId);
     } else {
         console.error('앱이 초기화되지 않았습니다.');
     }

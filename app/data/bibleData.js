@@ -218,13 +218,14 @@ function generateTestamentHTML(testament, meditations) {
             ${category.books.map(book => {
         const meditationCount = getMeditationCount(book.name, meditations);
         return `
-                <button class="bible-book" data-book="${book.name}" onclick="handleBibleBookClick('${book.name}')">
+                <div class="bible-book" data-book="${book.name}">
                   <div class="book-name">${book.name}</div>
                   <div class="book-info">${book.info}</div>
-                  ${meditationCount > 0 ?
-                `<div class="meditation-count">묵상 ${meditationCount}개</div>` :
-                ''}
-                </button>
+                  <div class="meditation-count">${meditationCount} 묵상</div>
+                  <button class="btn-new-meditation" onclick="handleBibleBookClick('${book.name}')">
+                    <i class="fas fa-plus"></i> 새 묵상 작성
+                  </button>
+                </div>
               `;
     }).join('')}
           </div>

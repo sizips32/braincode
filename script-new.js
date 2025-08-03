@@ -242,15 +242,23 @@ window.handleDoctrinePrayer = (doctrineId, event) => {
     }
 };
 
-// 교리 상세 내용 URL 관리 핸들러
+// 교리 상세 내용 핸들러 (URL 저장 또는 링크 이동)
 window.handleDoctrineDetail = (doctrineId, event) => {
     if (event) {
         event.stopPropagation();
     }
-    console.log('교리 상세 내용 URL 관리:', doctrineId);
+    console.log('교리 상세 내용 처리:', doctrineId);
 
     if (window.app) {
-        window.app.showDoctrineUrlModal(doctrineId);
+        const hasUrl = window.app.doctrineModel.getDoctrineUrl(doctrineId);
+
+        if (hasUrl) {
+            // URL이 저장되어 있으면 해당 URL로 이동
+            window.open(hasUrl, '_blank');
+        } else {
+            // URL이 없으면 입력 모달 표시
+            window.app.showDoctrineUrlModal(doctrineId);
+        }
     } else {
         console.error('앱이 초기화되지 않았습니다.');
     }

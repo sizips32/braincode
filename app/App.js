@@ -1254,7 +1254,7 @@ export class BibleMeditationApp {
                   <div class="doctrine-number-badge">${doctrine.order}</div>
                   <div class="doctrine-content-new">
                     <h4 class="doctrine-title-new">${doctrine.title}</h4>
-                    <p class="doctrine-summary-new">${doctrine.content.substring(0, 150)}...</p>
+                    <p class="doctrine-summary-new">${doctrine.content.substring(0, 200)}...</p>
                     <div class="doctrine-actions-new">
                       <button class="btn-detail-new ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id}, event)">
                         <i class="fas fa-file-alt"></i> 상세 내용
@@ -1961,6 +1961,9 @@ export class BibleMeditationApp {
 
       // 교리 목록 새로고침
       this.refreshCurrentView();
+
+      // 성공 메시지 표시
+      notificationManager.showSuccess('URL이 저장되었습니다. 이제 상세 내용 버튼을 클릭하면 해당 페이지로 이동합니다.');
     }
   }
 

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교리 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .category {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+        }
+
+        .category h3 {
+            color: #333;
+            margin-top: 0;
+        }
+
+        .doctrine {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 3px solid #007cba;
+        }
+
+        .doctrine-title {
+            font-weight: bold;
+            color: #007cba;
+        }
+
+        .doctrine-content {
+            margin: 5px 0;
+        }
+
+        .doctrine-reference {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>SDA 28개 기본교리 테스트</h1>
+    <div id="doctrineContainer"></div>
+
+    <script type="module">
+        import { DoctrineModel } from './app/models/DoctrineModel.js';
+
+        try {
+            const doctrineModel = new DoctrineModel();
+            const categories = doctrineModel.getCategories();
+            const container = document.getElementById('doctrineContainer');
+
+            let html = `<p><strong>총 카테고리 수:</strong> ${categories.length}개</p>`;
+
+            categories.forEach(category => {
+                const doctrines = doctrineModel.getByCategory(category);
+                html += `
+                    <div class="category">
+                        <h3>${category} (${doctrines.length}개)</h3>
+                `;
+
+                doctrines.forEach(doctrine => {
+                    html += `
+                        <div class="doctrine">
+                            <div class="doctrine-title">${doctrine.order}. ${doctrine.title}</div>
+                            <div class="doctrine-content">${doctrine.content}</div>
+                            <div class="doctrine-reference">참고: ${doctrine.reference}</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            });
+
+            container.innerHTML = html;
+            console.log('교리 모델 테스트 성공!');
+            console.log('카테고리들:', categories);
+
+        } catch (error) {
+            console.error('교리 모델 테스트 실패:', error);
+            document.getElementById('doctrineContainer').innerHTML =
+                '<p style="color: red;">교리 모델 로드 실패: ' + error.message + '</p>';
+        }
+    </script>
+</body>
+
+</html>

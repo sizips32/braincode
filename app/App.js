@@ -1233,7 +1233,7 @@ export class BibleMeditationApp {
 
   // 28 기본교리 탭 HTML 생성
   getDoctrinesTabHTML() {
-    const categories = this.doctrineModel.getCategories();
+    const doctrines = this.doctrineModel.getAll();
 
     return `
       <div class="doctrines-tab">
@@ -1242,31 +1242,26 @@ export class BibleMeditationApp {
           <p>제칠일안식일예수재림교회의 핵심 교리를 분류별로 학습하세요.</p>
         </div>
 
-        <div class="doctrines-categories">
-          ${categories.map(category => {
-      const doctrines = this.doctrineModel.getByCategory(category);
+        <div class="doctrines-list">
+          ${doctrines.map(doctrine => {
+      const hasUrl = this.doctrineModel.getDoctrineUrl(doctrine.id);
       return `
-              <div class="doctrine-category">
-                <h3 class="category-title">${category}</h3>
-                <div class="doctrine-list">
-                  ${doctrines.map(doctrine => {
-        const hasUrl = this.doctrineModel.getDoctrineUrl(doctrine.id);
-        return `
-                    <div class="doctrine-item" onclick="handleDoctrineClick(${doctrine.id})">
-                      <div class="doctrine-number">${doctrine.order}</div>
-                      <div class="doctrine-content">
-                        <h4 class="doctrine-title">${doctrine.title}</h4>
-                        <p class="doctrine-summary">${doctrine.content.substring(0, 100)}...</p>
-                        <div class="doctrine-actions">
-                          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id}, event)">
-                            <i class="fas fa-file-alt"></i> 상세 내용
-                            ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
-                          </button>
-                        </div>
-                      </div>
+              <div class="doctrine-section">
+                <div class="doctrine-category-line">
+                  <span class="doctrine-category-title">${doctrine.category}</span>
+                </div>
+                <div class="doctrine-item-new">
+                  <div class="doctrine-number-badge">${doctrine.order}</div>
+                  <div class="doctrine-content-new">
+                    <h4 class="doctrine-title-new">${doctrine.title}</h4>
+                    <p class="doctrine-summary-new">${doctrine.content.substring(0, 150)}...</p>
+                    <div class="doctrine-actions-new">
+                      <button class="btn-detail-new ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id}, event)">
+                        <i class="fas fa-file-alt"></i> 상세 내용
+                        ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
+                      </button>
                     </div>
-                  `;
-      }).join('')}
+                  </div>
                 </div>
               </div>
             `;

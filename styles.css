@@ -2811,94 +2811,166 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* 교리 카테고리 스타일 */
-.doctrine-category {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: var(--light-bg);
-  border-radius: var(--border-radius);
-}
-
-.category-title {
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--primary-color);
-}
-
-.doctrine-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.doctrine-item {
+/* 새로운 교리 페이지 스타일 */
+.doctrines-tab {
   background: white;
-  border-radius: var(--border-radius);
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  gap: 1rem;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.doctrine-item:hover {
+.doctrines-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.doctrines-header h2 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.doctrines-header p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.doctrines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 교리 섹션 스타일 */
+.doctrine-section {
+  margin-bottom: 2rem;
+}
+
+.doctrine-category-line {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.doctrine-category-line::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #3498db;
+  z-index: 1;
+}
+
+.doctrine-category-title {
+  background: white;
+  color: #3498db;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+}
+
+/* 교리 아이템 스타일 */
+.doctrine-item-new {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.doctrine-item-new:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: #3498db;
 }
 
-.doctrine-number {
-  background: var(--primary-color);
+.doctrine-number-badge {
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
 }
 
-.doctrine-content {
+.doctrine-content-new {
   flex: 1;
 }
 
-.doctrine-title {
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+.doctrine-title-new {
+  color: #2c3e50;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
-.doctrine-summary {
-  color: var(--secondary-color);
-  margin-bottom: 1rem;
-  line-height: 1.5;
+.doctrine-summary-new {
+  color: #7f8c8d;
+  margin: 0 0 1rem 0;
+  line-height: 1.6;
+  font-size: 0.95rem;
 }
 
-.doctrine-actions {
+.doctrine-actions-new {
   display: flex;
   gap: 0.5rem;
 }
 
-.btn-prayer {
-  background: var(--primary-color);
+.btn-detail-new {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--border-radius);
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 500;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
-.btn-prayer:hover {
-  background: var(--primary-dark);
+.btn-detail-new:hover {
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+}
+
+.btn-detail-new.btn-detail-has-url {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+}
+
+.btn-detail-new.btn-detail-has-url:hover {
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.url-indicator {
+  background: #FFC107;
+  color: #333;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 4px;
 }
 
 /* 예언 스타일 */
@@ -3346,171 +3418,180 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(4px);
 }
 
 .doctrine-url-content {
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
+  max-width: 550px;
+  max-height: 85vh;
   overflow-y: auto;
   animation: slideIn 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .doctrine-url-header {
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 24px 28px 20px;
+  border-bottom: 2px solid #f0f0f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
 }
 
 .doctrine-url-header h2 {
   margin: 0;
-  color: #333;
-  font-size: 1.4em;
+  color: white;
+  font-size: 1.5em;
   font-weight: 600;
 }
 
 .doctrine-url-header .btn-close {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
-  color: #666;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  color: white;
+  padding: 8px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .doctrine-url-header .btn-close:hover {
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
 .doctrine-url-body {
-  padding: 20px 24px;
+  padding: 24px 28px;
 }
 
 .doctrine-info {
-  margin-bottom: 20px;
-  padding: 16px;
-  background-color: #f8f9fa;
-  border-radius: 6px;
-  border-left: 4px solid #2196F3;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .doctrine-info h3 {
   margin: 0 0 8px 0;
-  color: #333;
-  font-size: 1.2em;
+  color: #2c3e50;
+  font-size: 1.3em;
   font-weight: 600;
 }
 
 .doctrine-info p {
   margin: 0;
-  color: #666;
-  font-size: 0.95em;
+  color: #7f8c8d;
+  font-size: 1em;
+  font-weight: 500;
 }
 
 .url-input-group {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .url-input-group label {
   display: block;
-  margin-bottom: 8px;
-  color: #333;
-  font-weight: 500;
-  font-size: 0.95em;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 1em;
 }
 
 .url-input-group input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border: 2px solid #e0e0e0;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 1em;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
   box-sizing: border-box;
+  background: #f8f9fa;
 }
 
 .url-input-group input:focus {
   outline: none;
-  border-color: #2196F3;
-  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+  border-color: #3498db;
+  box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+  background: white;
 }
 
 .url-input-group small {
   display: block;
-  margin-top: 6px;
-  color: #666;
-  font-size: 0.85em;
-  line-height: 1.4;
+  margin-top: 8px;
+  color: #7f8c8d;
+  font-size: 0.9em;
+  line-height: 1.5;
 }
 
 .doctrine-url-actions {
-  padding: 16px 24px 20px;
-  border-top: 1px solid #e0e0e0;
+  padding: 20px 28px 24px;
+  border-top: 2px solid #f0f0f0;
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  background: #f8f9fa;
+  border-radius: 0 0 12px 12px;
 }
 
 .doctrine-url-actions button {
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 6px;
-  font-size: 0.95em;
-  font-weight: 500;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px;
+  min-width: 100px;
 }
 
 .doctrine-url-actions .btn-secondary {
-  background-color: #f5f5f5;
-  color: #666;
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
 }
 
 .doctrine-url-actions .btn-secondary:hover {
-  background-color: #e0e0e0;
-  color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.3);
 }
 
 .doctrine-url-actions .btn-primary {
-  background-color: #2196F3;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
 }
 
 .doctrine-url-actions .btn-primary:hover {
-  background-color: #1976D2;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
 .doctrine-url-actions .btn-danger {
-  background-color: #f44336;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   color: white;
 }
 
 .doctrine-url-actions .btn-danger:hover {
-  background-color: #d32f2f;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
 
 /* 교리 상세 보기에서 URL 정보 표시 */
@@ -3981,5 +4062,72 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  /* 새로운 교리 페이지 반응형 */
+  .doctrines-tab {
+    padding: 1rem;
+  }
+
+  .doctrines-header h2 {
+    font-size: 2rem;
+  }
+
+  .doctrine-item-new {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .doctrine-number-badge {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    margin: 0 auto;
+  }
+
+  .doctrine-title-new {
+    font-size: 1.2rem;
+  }
+
+  .doctrine-summary-new {
+    font-size: 0.9rem;
+  }
+
+  .doctrine-actions-new {
+    justify-content: center;
+  }
+
+  .btn-detail-new {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  /* 교리 URL 모달 반응형 */
+  .doctrine-url-content {
+    width: 95%;
+    margin: 20px;
+  }
+
+  .doctrine-url-header {
+    padding: 20px 24px 16px;
+  }
+
+  .doctrine-url-header h2 {
+    font-size: 1.3em;
+  }
+
+  .doctrine-url-body {
+    padding: 20px 24px;
+  }
+
+  .doctrine-url-actions {
+    padding: 16px 24px 20px;
+    flex-direction: column;
+  }
+
+  .doctrine-url-actions button {
+    width: 100%;
+    margin-bottom: 8px;
   }
 }

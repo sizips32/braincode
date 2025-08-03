@@ -214,26 +214,47 @@ export class BibleMeditationApp {
   getBibleDetailViewHTML(bookName) {
     const meditations = this.meditationModel.getByBook(bookName);
     const totalMeditations = meditations.length;
-    const recentMeditations = meditations.slice(0, 10); // 최근 10개만 표시
-
+    
     // 통계 계산
-    const thisMonth = new Date().getMonth();
-    const thisYear = new Date().getFullYear();
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    
+    // 이번 달 묵상 수
     const monthlyMeditations = meditations.filter(m => {
       const meditationDate = new Date(m.date);
       return meditationDate.getMonth() === thisMonth && meditationDate.getFullYear() === thisYear;
     }).length;
+    
+    // 최근 7일 묵상 수
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const recent7Days = meditations.filter(m => {
+      const meditationDate = new Date(m.date);
+      return meditationDate >= sevenDaysAgo;
+    }).length;
+    
+    // 월평균 계산 (최근 3개월 기준)
+    const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+    const recent3Months = meditations.filter(m => {
+      const meditationDate = new Date(m.date);
+      return meditationDate >= threeMonthsAgo;
+    });
+    const monthlyAverage = recent3Months.length > 0 ? Math.round(recent3Months.length / 3) : 0;
 
     return `
       <div class="bible-detail-container">
         <div class="bible-detail-header">
           <button class="btn-back" onclick="handleBibleDetailBack()">
-            <i class="fas fa-arrow-left"></i> 뒤로 가기
+            <i class="fas fa-arrow-left"></i> 성경 목록으로
           </button>
           <div class="bible-detail-title">
-            <h1>📖 ${bookName}</h1>
-            <p class="bible-detail-subtitle">묵상 관리</p>
+            <div class="book-icon">📖</div>
+            <h1>${bookName}</h1>
+            <p class="bible-detail-subtitle">묵상과 말씀을 나누는 공간</p>
           </div>
+          <button class="btn-new-meditation-primary" onclick="handleBibleMeditation('${bookName}')">
+            <i class="fas fa-plus"></i> 새 묵상 작성
+          </button>
         </div>
 
         <div class="bible-stats-section">
@@ -242,59 +263,96 @@ export class BibleMeditationApp {
               <div class="stat-icon">📊</div>
               <div class="stat-content">
                 <div class="stat-number">${totalMeditations}</div>
-                <div class="stat-label">총 묵상 수</div>
+                <div class="stat-label">총 묵상</div>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon">📅</div>
               <div class="stat-content">
                 <div class="stat-number">${monthlyMeditations}</div>
-                <div class="stat-label">이번 달 묵상</div>
+                <div class="stat-label">이번 달</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">🔥</div>
+              <div class="stat-content">
+                <div class="stat-number">${recent7Days}</div>
+                <div class="stat-label">최근 7일</div>
               </div>
             </div>
             <div class="stat-card">
               <div class="stat-icon">⭐</div>
               <div class="stat-content">
-                <div class="stat-number">${totalMeditations > 0 ? Math.round((monthlyMeditations / totalMeditations) * 100) : 0}%</div>
-                <div class="stat-label">이번 달 비율</div>
+                <div class="stat-number">${monthlyAverage}</div>
+                <div class="stat-label">월평균</div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="bible-actions-section">
-          <button class="btn-new-meditation" onclick="handleBibleMeditation('${bookName}')">
-            <i class="fas fa-plus"></i> 새 묵상 작성
-          </button>
-          <button class="btn-view-all" onclick="handleViewAllMeditations('${bookName}')">
-            <i class="fas fa-list"></i> 전체 묵상 보기
-          </button>
-        </div>
-
-        <div class="recent-meditations-section">
-          <h3>📝 최근 묵상 목록</h3>
-          ${this.getRecentMeditationsHTML(recentMeditations, bookName)}
-        </div>
-
-        <div class="bible-insights-section">
-          <h3>💡 ${bookName} 묵상 인사이트</h3>
-          <div class="insights-grid">
-            <div class="insight-card">
-              <div class="insight-icon">🎯</div>
-              <div class="insight-content">
-                <h4>가장 많이 묵상한 구절</h4>
-                <p>${this.getMostMeditatedVerse(meditations)}</p>
-              </div>
-            </div>
-            <div class="insight-card">
-              <div class="insight-icon">📈</div>
-              <div class="insight-content">
-                <h4>묵상 패턴</h4>
-                <p>${this.getMeditationPattern(meditations)}</p>
-              </div>
+        <div class="meditation-list-section">
+          <div class="meditation-list-header">
+            <h3>≡ 묵상 목록</h3>
+            <div class="meditation-sort">
+              <select class="sort-select">
+                <option value="newest">최신순</option>
+                <option value="oldest">오래된순</option>
+                <option value="title">제목순</option>
+              </select>
             </div>
           </div>
+          
+          <div class="meditation-list-content">
+            ${this.getMeditationListContentHTML(meditations, bookName)}
+          </div>
         </div>
+      </div>
+    `;
+  }
+
+  // 묵상 목록 내용 HTML 생성
+  getMeditationListContentHTML(meditations, bookName) {
+    if (meditations.length === 0) {
+      return `
+        <div class="empty-meditation-state">
+          <div class="empty-illustration">
+            <div class="paper-icon">📄</div>
+            <div class="pencil-icon">✏️</div>
+          </div>
+          <h4>아직 묵상이 없습니다</h4>
+          <p>${bookName}에 대한 첫 번째 묵상을 작성해보세요!</p>
+          <button class="btn-first-meditation" onclick="handleBibleMeditation('${bookName}')">
+            <i class="fas fa-plus"></i> 첫 묵상 작성하기
+          </button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="meditation-items">
+        ${meditations.map(meditation => `
+          <div class="meditation-item" onclick="handleMeditationEdit(${meditation.id})">
+            <div class="meditation-item-header">
+              <div class="meditation-date">
+                <i class="fas fa-calendar"></i>
+                ${this.formatDate(meditation.date)}
+              </div>
+              <div class="meditation-actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); handleMeditationEdit(${meditation.id})">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="event.stopPropagation(); handleMeditationDelete(${meditation.id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="meditation-item-content">
+              <h4 class="meditation-title">${meditation.title || '제목 없음'}</h4>
+              <p class="meditation-reference">${meditation.bibleReference || '성경 구절 없음'}</p>
+              <p class="meditation-summary">${meditation.capture ? meditation.capture.substring(0, 100) + (meditation.capture.length > 100 ? '...' : '') : '내용 없음'}</p>
+            </div>
+          </div>
+        `).join('')}
       </div>
     `;
   }

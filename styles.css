@@ -3702,153 +3702,331 @@ body {
 .bible-detail-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
 .bible-detail-header {
   display: flex;
   align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f0f0f0;
+  justify-content: space-between;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
 .btn-back {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  color: #6c757d;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .btn-back:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  background: #e9ecef;
+  color: #495057;
+  transform: translateX(-2px);
+}
+
+.bible-detail-title {
+  text-align: center;
+  flex: 1;
+}
+
+.book-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
 }
 
 .bible-detail-title h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
+  font-size: 2rem;
+  color: #212529;
   margin: 0;
-  font-weight: 700;
+  text-align: center;
 }
 
 .bible-detail-subtitle {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-  margin: 0.5rem 0 0 0;
+  color: #6c757d;
+  margin: 5px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.btn-new-meditation-primary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-new-meditation-primary:hover {
+  background: #218838;
+  transform: translateY(-1px);
 }
 
 /* 통계 섹션 */
 .bible-stats-section {
-  margin-bottom: 2rem;
+  margin-bottom: 20px;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
 }
 
 .stat-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 1.5rem;
+  background: white;
+  padding: 20px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  transform: translateY(-2px);
 }
 
 .stat-icon {
   font-size: 2rem;
-  background: rgba(255, 255, 255, 0.2);
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.stat-content {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #212529;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+/* 묵상 목록 섹션 */
+.meditation-list-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.meditation-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.meditation-list-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #212529;
+}
+
+.meditation-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  color: #495057;
+  cursor: pointer;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+.meditation-list-content {
+  padding: 20px;
+  min-height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.stat-content {
-  flex: 1;
+/* 빈 상태 스타일 */
+.empty-meditation-state {
+  text-align: center;
+  color: #6c757d;
 }
 
-.stat-number {
+.empty-illustration {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paper-icon {
+  font-size: 4rem;
+  color: #dee2e6;
+  position: relative;
+  z-index: 1;
+}
+
+.pencil-icon {
   font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
+  color: #adb5bd;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  opacity: 0.9;
+.empty-meditation-state h4 {
+  font-size: 18px;
+  margin: 0 0 8px 0;
+  color: #495057;
 }
 
-/* 액션 버튼 섹션 */
-.bible-actions-section {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
+.empty-meditation-state p {
+  font-size: 14px;
+  margin: 0 0 20px 0;
+  color: #6c757d;
 }
 
-.btn-new-meditation {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+.btn-first-meditation {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #28a745;
   color: white;
   border: none;
-  padding: 1rem 2rem;
+  padding: 12px 24px;
   border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
+  font-size: 14px;
   font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.btn-first-meditation:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+/* 묵상 아이템 스타일 */
+.meditation-items {
+  width: 100%;
+}
+
+.meditation-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.meditation-item:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.meditation-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.meditation-date {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 6px;
+  font-size: 14px;
+  color: #6c757d;
 }
 
-.btn-new-meditation:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+.meditation-actions {
+  display: flex;
+  gap: 8px;
 }
 
-.btn-view-all {
-  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
-  color: white;
+.meditation-actions button {
+  background: none;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 6px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: 500;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  font-size: 14px;
 }
 
-.btn-view-all:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+.meditation-actions .btn-edit {
+  color: #007bff;
+}
+
+.meditation-actions .btn-edit:hover {
+  background: rgba(0, 123, 255, 0.1);
+}
+
+.meditation-actions .btn-delete {
+  color: #dc3545;
+}
+
+.meditation-actions .btn-delete:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+.meditation-item-content h4 {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  color: #212529;
+}
+
+.meditation-reference {
+  font-size: 14px;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+
+.meditation-summary {
+  font-size: 14px;
+  color: #495057;
+  line-height: 1.5;
 }
 
 /* 최근 묵상 섹션 */
@@ -4037,36 +4215,48 @@ body {
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .bible-detail-container {
-    padding: 1rem;
+    padding: 15px;
   }
 
   .bible-detail-header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    gap: 15px;
+    text-align: center;
   }
 
   .bible-detail-title h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
-  .bible-actions-section {
+  .stat-card {
+    padding: 15px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .meditation-list-header {
     flex-direction: column;
-  }
-
-  .insights-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .meditation-card-header {
-    flex-direction: column;
+    gap: 12px;
     align-items: flex-start;
-    gap: 0.5rem;
   }
+
+  .meditation-item-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .meditation-actions {
+    align-self: flex-end;
+  }
+}
 
   /* 새로운 교리 페이지 반응형 */
   .doctrines-tab {

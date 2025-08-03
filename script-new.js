@@ -413,6 +413,36 @@ window.handleMeditationAction = (action, meditationId) => {
     }
 };
 
+// 묵상 편집 핸들러
+window.handleMeditationEdit = (meditationId) => {
+    console.log('묵상 편집:', meditationId);
+
+    if (window.app) {
+        const meditation = window.app.meditationModel.getById(meditationId);
+        if (meditation) {
+            window.app.showMeditationForm(meditation.date, null, null, null, meditationId);
+        }
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 묵상 삭제 핸들러
+window.handleMeditationDelete = (meditationId) => {
+    console.log('묵상 삭제:', meditationId);
+
+    if (window.app) {
+        if (confirm('정말로 이 묵상을 삭제하시겠습니까?')) {
+            if (window.app.meditationModel.deleteMeditationById(meditationId)) {
+                // 현재 뷰 새로고침
+                window.app.refreshCurrentView();
+            }
+        }
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
 // 교회 이벤트 액션 핸들러
 window.handleChurchEventAction = (action, eventId = null) => {
     console.log('교회 이벤트 액션 호출됨:', action, eventId);

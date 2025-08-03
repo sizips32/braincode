@@ -202,6 +202,195 @@ export class BibleMeditationApp {
     this.attachBibleListEvents();
   }
 
+  // 성경별 상세 뷰 표시
+  showBibleDetailView(bookName) {
+    const container = document.querySelector('.meditation-container');
+    container.innerHTML = this.getBibleDetailViewHTML(bookName);
+    this.currentView = 'bible-detail';
+    this.attachBibleDetailEvents();
+  }
+
+  // 성경별 묵상 관리 페이지 HTML 생성
+  getBibleDetailViewHTML(bookName) {
+    const meditations = this.meditationModel.getByBook(bookName);
+    const totalMeditations = meditations.length;
+    const recentMeditations = meditations.slice(0, 10); // 최근 10개만 표시
+
+    // 통계 계산
+    const thisMonth = new Date().getMonth();
+    const thisYear = new Date().getFullYear();
+    const monthlyMeditations = meditations.filter(m => {
+      const meditationDate = new Date(m.date);
+      return meditationDate.getMonth() === thisMonth && meditationDate.getFullYear() === thisYear;
+    }).length;
+
+    return `
+      <div class="bible-detail-container">
+        <div class="bible-detail-header">
+          <button class="btn-back" onclick="handleBibleDetailBack()">
+            <i class="fas fa-arrow-left"></i> 뒤로 가기
+          </button>
+          <div class="bible-detail-title">
+            <h1>📖 ${bookName}</h1>
+            <p class="bible-detail-subtitle">묵상 관리</p>
+          </div>
+        </div>
+
+        <div class="bible-stats-section">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">📊</div>
+              <div class="stat-content">
+                <div class="stat-number">${totalMeditations}</div>
+                <div class="stat-label">총 묵상 수</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📅</div>
+              <div class="stat-content">
+                <div class="stat-number">${monthlyMeditations}</div>
+                <div class="stat-label">이번 달 묵상</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">⭐</div>
+              <div class="stat-content">
+                <div class="stat-number">${totalMeditations > 0 ? Math.round((monthlyMeditations / totalMeditations) * 100) : 0}%</div>
+                <div class="stat-label">이번 달 비율</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bible-actions-section">
+          <button class="btn-new-meditation" onclick="handleBibleMeditation('${bookName}')">
+            <i class="fas fa-plus"></i> 새 묵상 작성
+          </button>
+          <button class="btn-view-all" onclick="handleViewAllMeditations('${bookName}')">
+            <i class="fas fa-list"></i> 전체 묵상 보기
+          </button>
+        </div>
+
+        <div class="recent-meditations-section">
+          <h3>📝 최근 묵상 목록</h3>
+          ${this.getRecentMeditationsHTML(recentMeditations, bookName)}
+        </div>
+
+        <div class="bible-insights-section">
+          <h3>💡 ${bookName} 묵상 인사이트</h3>
+          <div class="insights-grid">
+            <div class="insight-card">
+              <div class="insight-icon">🎯</div>
+              <div class="insight-content">
+                <h4>가장 많이 묵상한 구절</h4>
+                <p>${this.getMostMeditatedVerse(meditations)}</p>
+              </div>
+            </div>
+            <div class="insight-card">
+              <div class="insight-icon">📈</div>
+              <div class="insight-content">
+                <h4>묵상 패턴</h4>
+                <p>${this.getMeditationPattern(meditations)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // 최근 묵상 목록 HTML 생성
+  getRecentMeditationsHTML(meditations, bookName) {
+    if (meditations.length === 0) {
+      return `
+        <div class="no-meditations">
+          <div class="no-meditations-icon">📖</div>
+          <h4>아직 ${bookName}에 대한 묵상이 없습니다</h4>
+          <p>첫 번째 묵상을 작성해보세요!</p>
+          <button class="btn-new-meditation" onclick="handleBibleMeditation('${bookName}')">
+            <i class="fas fa-plus"></i> 새 묵상 작성
+          </button>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="recent-meditations-list">
+        ${meditations.map(meditation => `
+          <div class="meditation-card" onclick="handleMeditationEdit(${meditation.id})">
+            <div class="meditation-card-header">
+              <div class="meditation-date">
+                <i class="fas fa-calendar"></i>
+                ${this.formatDate(meditation.date)}
+              </div>
+              <div class="meditation-actions">
+                <button class="btn-edit" onclick="event.stopPropagation(); handleMeditationEdit(${meditation.id})">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-delete" onclick="event.stopPropagation(); handleMeditationDelete(${meditation.id})">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="meditation-card-content">
+              <h4 class="meditation-title">${meditation.title || '제목 없음'}</h4>
+              <p class="meditation-reference">${meditation.reference || '성경 구절 없음'}</p>
+              <p class="meditation-summary">${meditation.content.substring(0, 100)}${meditation.content.length > 100 ? '...' : ''}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // 가장 많이 묵상한 구절 찾기
+  getMostMeditatedVerse(meditations) {
+    if (meditations.length === 0) return '아직 묵상이 없습니다';
+
+    const verseCount = {};
+    meditations.forEach(m => {
+      if (m.reference) {
+        verseCount[m.reference] = (verseCount[m.reference] || 0) + 1;
+      }
+    });
+
+    const mostFrequent = Object.entries(verseCount)
+      .sort(([, a], [, b]) => b - a)[0];
+
+    return mostFrequent ? mostFrequent[0] : '성경 구절 정보 없음';
+  }
+
+  // 묵상 패턴 분석
+  getMeditationPattern(meditations) {
+    if (meditations.length === 0) return '아직 묵상이 없습니다';
+
+    const monthlyCounts = {};
+    meditations.forEach(m => {
+      const date = new Date(m.date);
+      const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+      monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
+    });
+
+    const recentMonths = Object.entries(monthlyCounts)
+      .sort(([a], [b]) => b.localeCompare(a))
+      .slice(0, 3);
+
+    if (recentMonths.length === 0) return '패턴 분석 불가';
+
+    const avgPerMonth = recentMonths.reduce((sum, [, count]) => sum + count, 0) / recentMonths.length;
+    return `월 평균 ${Math.round(avgPerMonth)}회 묵상`;
+  }
+
+  // 날짜 포맷팅
+  formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
   // 검색 뷰 표시
   showSearchView() {
     const container = document.querySelector('.meditation-container');

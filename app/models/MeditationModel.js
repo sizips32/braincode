@@ -39,6 +39,13 @@ export class MeditationModel {
         );
     }
 
+    // 성경별 묵상 조회 (getByBook으로 별칭)
+    getByBook(bookName) {
+        return this.meditations.filter(m =>
+            m.bibleReference && m.bibleReference.includes(bookName)
+        );
+    }
+
     // 묵상 저장/수정
     saveMeditation(meditationData) {
         try {

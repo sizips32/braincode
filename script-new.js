@@ -355,9 +355,31 @@ window.handleBibleBookClick = (bookName) => {
     console.log('성경 책 클릭됨:', bookName);
 
     if (window.app) {
-        window.app.showMeditationForm(null, bookName);
+        window.app.showBibleDetailView(bookName);
     } else {
         console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 성경별 상세 뷰에서 뒤로 가기 핸들러
+window.handleBibleDetailBack = () => {
+    if (window.app) {
+        window.app.showBibleListView();
+    }
+};
+
+// 성경별 상세 뷰에서 묵상 작성 핸들러
+window.handleBibleMeditation = (bookName) => {
+    if (window.app) {
+        window.app.showMeditationForm(null, bookName);
+    }
+};
+
+// 전체 묵상 보기 핸들러
+window.handleViewAllMeditations = (bookName) => {
+    if (window.app) {
+        // 전체 묵상 목록 페이지로 이동하는 로직
+        window.app.showAllMeditationsView(bookName);
     }
 };
 

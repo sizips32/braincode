@@ -2006,7 +2006,7 @@ export class BibleMeditationApp {
         </div>
         <div class="doctrine-url-actions">
           <button class="btn-secondary" onclick="this.closest('.doctrine-url-modal').remove()">취소</button>
-          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">저장</button>
+          <button class="btn-primary" onclick="handleDoctrineUrlSave('${doctrineId}')">저장</button>
         </div>
       </div>
     `;

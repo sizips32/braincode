@@ -281,12 +281,17 @@ window.handleDoctrineDetailEdit = (doctrineId, event) => {
 
 // 교리 핵심 URL 저장 핸들러
 window.handleDoctrineUrlSave = (doctrineId) => {
-    console.log('교리 핵심 URL 저장:', doctrineId);
+    console.log('=== 전역 handleDoctrineUrlSave 호출됨 ===');
+    console.log('전달받은 doctrineId:', doctrineId);
+    console.log('doctrineId 타입:', typeof doctrineId);
+    console.log('window.app 존재 여부:', !!window.app);
 
     if (window.app) {
+        console.log('앱 인스턴스에서 handleDoctrineUrlSave 호출');
         window.app.handleDoctrineUrlSave(doctrineId);
     } else {
         console.error('앱이 초기화되지 않았습니다.');
+        console.error('window.app:', window.app);
     }
 };
 

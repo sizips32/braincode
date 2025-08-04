@@ -2041,6 +2041,9 @@ export class BibleMeditationApp {
 
   // 교리 상세 내용 URL 저장 처리
   handleDoctrineUrlSave(doctrineId) {
+    // doctrineId를 숫자로 변환
+    const numericDoctrineId = parseInt(doctrineId, 10);
+    
     const urlInput = document.getElementById('doctrineUrl');
     const url = urlInput.value.trim();
 
@@ -2057,24 +2060,46 @@ export class BibleMeditationApp {
       return;
     }
 
-    if (this.doctrineModel.saveDoctrineUrl(doctrineId, url)) {
+    console.log('URL 저장 시도:', { doctrineId: numericDoctrineId, url });
+
+    if (this.doctrineModel.saveDoctrineUrl(numericDoctrineId, url)) {
       // 입력 필드 초기화
       urlInput.value = '';
       
       // URL 목록 업데이트
-      this.updateUrlList(doctrineId);
+      this.updateUrlList(numericDoctrineId);
       
       // 성공 메시지 표시
       notificationManager.showSuccess('URL이 저장되었습니다.');
+      
+      console.log('URL 저장 완료, 목록 업데이트됨');
+    } else {
+      console.log('URL 저장 실패');
     }
   }
 
   // URL 목록 업데이트
   updateUrlList(doctrineId) {
+    console.log('URL 목록 업데이트 시작:', doctrineId);
+    
     const urlListContainer = document.getElementById(`urlList-${doctrineId}`);
+    console.log('URL 목록 컨테이너 찾음:', !!urlListContainer);
+    console.log('찾고 있는 컨테이너 ID:', `urlList-${doctrineId}`);
+    
     if (urlListContainer) {
       const urlList = this.doctrineModel.getDoctrineUrlList(doctrineId);
-      urlListContainer.innerHTML = this.getUrlListHTML(doctrineId, urlList);
+      console.log('현재 URL 목록:', urlList);
+      
+      const newHTML = this.getUrlListHTML(doctrineId, urlList);
+      console.log('새로운 HTML 생성됨');
+      
+      urlListContainer.innerHTML = newHTML;
+      console.log('URL 목록 업데이트 완료');
+    } else {
+      console.error('URL 목록 컨테이너를 찾을 수 없음:', `urlList-${doctrineId}`);
+      // DOM에서 모든 urlList-로 시작하는 요소들을 찾아서 로그
+      const allUrlLists = document.querySelectorAll('[id^="urlList-"]');
+      console.log('현재 페이지의 모든 URL 목록 컨테이너:', Array.from(allUrlLists).map(el => el.id));
     }
   }
 

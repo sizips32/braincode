@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL 목록 테스트</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>URL 목록 기능 테스트</h1>
+        
+        <div class="test-section">
+            <h2>교리 URL 모달 테스트</h2>
+            <button onclick="testUrlModal()" class="btn-primary">URL 모달 열기</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>콘솔 로그 확인</h2>
+            <p>브라우저의 개발자 도구 콘솔을 열어서 로그를 확인하세요.</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { BibleMeditationApp } from './app/App.js';
+        
+        // 앱 초기화
+        window.app = new BibleMeditationApp();
+        
+        // 테스트 함수
+        window.testUrlModal = function() {
+            // 첫 번째 교리 ID 사용 (실제로는 존재하는 교리 ID를 사용해야 함)
+            const firstDoctrine = window.app.doctrineModel.getAll()[0];
+            if (firstDoctrine) {
+                console.log('테스트용 교리:', firstDoctrine);
+                window.app.showDoctrineUrlModal(firstDoctrine.id);
+            } else {
+                console.error('테스트할 교리가 없습니다.');
+            }
+        };
+        
+        console.log('테스트 페이지 로드됨');
+        console.log('사용 가능한 교리:', window.app.doctrineModel.getAll());
+    </script>
+</body>
+</html> 

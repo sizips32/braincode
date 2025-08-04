@@ -304,16 +304,22 @@ export class DoctrineModel {
 
     // 교리 상세 내용 URL 목록 저장
     saveDoctrineUrl(id, url) {
+        console.log('DoctrineModel.saveDoctrineUrl 호출:', { id, url });
+        
         const index = this.doctrines.findIndex(doctrine => doctrine.id === id);
+        console.log('교리 인덱스:', index);
+        
         if (index !== -1) {
             // URL 목록 초기화 (없는 경우)
             if (!this.doctrines[index].urlList) {
                 this.doctrines[index].urlList = [];
+                console.log('URL 목록 초기화됨');
             }
             
             // 중복 URL 체크
             const existingUrl = this.doctrines[index].urlList.find(item => item.url === url);
             if (existingUrl) {
+                console.log('중복 URL 발견:', url);
                 notificationManager.showError('이미 저장된 URL입니다.');
                 return false;
             }
@@ -326,15 +332,21 @@ export class DoctrineModel {
                 title: this.extractTitleFromUrl(url)
             };
             
+            console.log('새 URL 항목 생성:', newUrlItem);
+            
             this.doctrines[index].urlList.push(newUrlItem);
             
             // 기존 coreUrl도 유지 (하위 호환성)
             this.doctrines[index].coreUrl = url;
             
             this.save();
+            console.log('URL 저장 완료, 현재 목록:', this.doctrines[index].urlList);
+            
             notificationManager.showSuccess('URL이 저장되었습니다.');
             return true;
         }
+        
+        console.error('교리를 찾을 수 없음:', id);
         return false;
     }
 

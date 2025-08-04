@@ -720,6 +720,9 @@ export class BibleMeditationApp {
     }
 
     switch (action) {
+      case 'view':
+        this.showMeditationDetail(meditation);
+        break;
       case 'edit':
         this.showMeditationForm(meditation.date, null, null, null, meditationId);
         break;
@@ -1187,10 +1190,13 @@ export class BibleMeditationApp {
         <div class="meditation-header">
           <div class="meditation-date">${Utils.formatDate(meditation.date)}</div>
           <div class="meditation-actions">
-            <button class="btn-edit" onclick="handleMeditationAction('edit', ${meditation.id})">
+            <button class="btn-view" onclick="handleMeditationAction('view', ${meditation.id})" title="전체 보기">
+              <i class="fas fa-eye"></i> 보기
+            </button>
+            <button class="btn-edit" onclick="handleMeditationAction('edit', ${meditation.id})" title="수정">
               <i class="fas fa-edit"></i> 수정
             </button>
-            <button class="btn-delete" onclick="handleMeditationAction('delete', ${meditation.id})">
+            <button class="btn-delete" onclick="handleMeditationAction('delete', ${meditation.id})" title="삭제">
               <i class="fas fa-trash"></i> 삭제
             </button>
           </div>
@@ -2046,6 +2052,109 @@ export class BibleMeditationApp {
         </div>
       </div>
     `).join('');
+  }
+
+  // 묵상 상세 보기 모달
+  showMeditationDetail(meditation) {
+    const modal = document.createElement('div');
+    modal.className = 'meditation-detail-modal';
+    modal.innerHTML = `
+      <div class="meditation-detail-content">
+        <div class="meditation-detail-header">
+          <h2>묵상 상세 보기</h2>
+          <button class="btn-close" onclick="this.closest('.meditation-detail-modal').remove()">×</button>
+        </div>
+        <div class="meditation-detail-body">
+          <div class="meditation-detail-info">
+            <div class="meditation-detail-date">
+              <i class="fas fa-calendar"></i>
+              ${Utils.formatDate(meditation.date)}
+            </div>
+            <div class="meditation-detail-reference">
+              <i class="fas fa-book-bible"></i>
+              ${Utils.escapeHtml(meditation.bibleReference)}
+            </div>
+          </div>
+          
+          <div class="meditation-detail-section">
+            <h3>📖 성경 구절</h3>
+            <div class="meditation-detail-verse">
+              ${Utils.escapeHtml(meditation.verse)}
+            </div>
+          </div>
+          
+          <div class="meditation-detail-section">
+            <h3>💭 묵상 제목</h3>
+            <div class="meditation-detail-title">
+              ${Utils.escapeHtml(meditation.title)}
+            </div>
+          </div>
+          
+          <div class="meditation-detail-section">
+            <h3>🎯 포착하기</h3>
+            <div class="meditation-detail-capture">
+              ${Utils.escapeHtml(meditation.capture)}
+            </div>
+          </div>
+          
+          <div class="meditation-detail-section">
+            <h3>💡 적용하기</h3>
+            <div class="meditation-detail-application">
+              ${Utils.escapeHtml(meditation.application)}
+            </div>
+          </div>
+          
+          <div class="meditation-detail-section">
+            <h3>🙏 기도하기</h3>
+            <div class="meditation-detail-prayer">
+              ${Utils.escapeHtml(meditation.prayer)}
+            </div>
+          </div>
+          
+          ${meditation.keywords ? `
+            <div class="meditation-detail-section">
+              <h3>🏷️ 키워드</h3>
+              <div class="meditation-detail-keywords">
+                ${meditation.keywords.split(',').map(keyword => 
+                  `<span class="keyword-tag">${Utils.escapeHtml(keyword.trim())}</span>`
+                ).join('')}
+              </div>
+            </div>
+          ` : ''}
+          
+          ${meditation.notes ? `
+            <div class="meditation-detail-section">
+              <h3>📝 메모</h3>
+              <div class="meditation-detail-notes">
+                ${Utils.escapeHtml(meditation.notes)}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="meditation-detail-actions">
+          <button class="btn-secondary" onclick="this.closest('.meditation-detail-modal').remove()">닫기</button>
+          <button class="btn-primary" onclick="handleMeditationAction('edit', ${meditation.id})">수정하기</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 외부 클릭 시 닫기
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
+    });
+    
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function closeOnEscape(event) {
+      if (event.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', closeOnEscape);
+      }
+    });
   }
 
   // 교리 상세 내용 URL 저장 처리

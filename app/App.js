@@ -214,25 +214,25 @@ export class BibleMeditationApp {
   getBibleDetailViewHTML(bookName) {
     const meditations = this.meditationModel.getByBook(bookName);
     const totalMeditations = meditations.length;
-    
+
     // 통계 계산
     const now = new Date();
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
-    
+
     // 이번 달 묵상 수
     const monthlyMeditations = meditations.filter(m => {
       const meditationDate = new Date(m.date);
       return meditationDate.getMonth() === thisMonth && meditationDate.getFullYear() === thisYear;
     }).length;
-    
+
     // 최근 7일 묵상 수
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const recent7Days = meditations.filter(m => {
       const meditationDate = new Date(m.date);
       return meditationDate >= sevenDaysAgo;
     }).length;
-    
+
     // 월평균 계산 (최근 3개월 기준)
     const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
     const recent3Months = meditations.filter(m => {
@@ -1946,7 +1946,10 @@ export class BibleMeditationApp {
           </div>` : ''}
         </div>
         <div class="doctrine-detail-actions">
-          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" onclick="handleDoctrineDetail(${doctrine.id})">
+          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" 
+                  onclick="handleDoctrineDetail(${doctrine.id})"
+                  oncontextmenu="handleDoctrineDetailEdit(${doctrine.id}); return false;"
+                  title="${hasUrl ? '클릭: 저장된 URL로 이동 | 우클릭: URL 수정' : '클릭: URL 입력 모달 열기'}">
             <i class="fas fa-file-alt"></i> 상세 내용
             ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
           </button>
@@ -1956,7 +1959,7 @@ export class BibleMeditationApp {
     document.body.appendChild(modal);
   }
 
-  // 교리 핵심 URL 입력 모달 표시
+  // 교리 상세 내용 URL 입력 모달 표시
   showDoctrineUrlModal(doctrineId) {
     const doctrine = this.doctrineModel.getById(doctrineId);
     if (!doctrine) return;
@@ -1979,13 +1982,19 @@ export class BibleMeditationApp {
           <div class="url-input-group">
             <label for="doctrineUrl">교리 상세 내용 URL:</label>
             <input type="url" id="doctrineUrl" placeholder="https://example.com" value="${currentUrl || ''}" />
-            <small>교리와 관련된 상세 자료의 URL을 입력하세요.</small>
+            <small>교리와 관련된 상세 자료의 URL을 입력하세요. 저장 후에는 상세 내용 버튼을 클릭하면 해당 페이지로 바로 이동합니다.</small>
           </div>
+          ${currentUrl ? `
+          <div class="url-info-box">
+            <i class="fas fa-info-circle"></i>
+            <span>현재 저장된 URL: <a href="${currentUrl}" target="_blank">${currentUrl}</a></span>
+          </div>
+          ` : ''}
         </div>
         <div class="doctrine-url-actions">
           <button class="btn-secondary" onclick="this.closest('.doctrine-url-modal').remove()">취소</button>
           ${currentUrl ? '<button class="btn-danger" onclick="handleDoctrineUrlDelete(' + doctrineId + ')">삭제</button>' : ''}
-          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">저장</button>
+          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">${currentUrl ? '수정' : '저장'}</button>
         </div>
       </div>
     `;

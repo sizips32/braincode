@@ -4258,70 +4258,136 @@ body {
   }
 }
 
-  /* 새로운 교리 페이지 반응형 */
-  .doctrines-tab {
-    padding: 1rem;
-  }
+/* 새로운 교리 페이지 반응형 */
+.doctrines-tab {
+  padding: 1rem;
+}
 
-  .doctrines-header h2 {
-    font-size: 2rem;
-  }
+.doctrines-header h2 {
+  font-size: 2rem;
+}
 
-  .doctrine-item-new {
-    flex-direction: column;
-    text-align: center;
-    gap: 1rem;
-  }
+.doctrine-item-new {
+  flex-direction: column;
+  text-align: center;
+  gap: 1rem;
+}
 
-  .doctrine-number-badge {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-    margin: 0 auto;
-  }
+.doctrine-number-badge {
+  width: 60px;
+  height: 60px;
+  font-size: 1.5rem;
+  margin: 0 auto;
+}
 
-  .doctrine-title-new {
-    font-size: 1.2rem;
-  }
+.doctrine-title-new {
+  font-size: 1.2rem;
+}
 
-  .doctrine-summary-new {
-    font-size: 0.9rem;
-  }
+.doctrine-summary-new {
+  font-size: 0.9rem;
+}
 
-  .doctrine-actions-new {
-    justify-content: center;
-  }
+.doctrine-actions-new {
+  justify-content: center;
+}
 
-  .btn-detail-new {
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-  }
+.btn-detail-new {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+}
 
-  /* 교리 URL 모달 반응형 */
-  .doctrine-url-content {
-    width: 95%;
-    margin: 20px;
-  }
+/* 교리 URL 모달 반응형 */
+.doctrine-url-content {
+  width: 95%;
+  margin: 20px;
+}
 
-  .doctrine-url-header {
-    padding: 20px 24px 16px;
-  }
+.doctrine-url-header {
+  padding: 20px 24px 16px;
+}
 
-  .doctrine-url-header h2 {
-    font-size: 1.3em;
-  }
+.doctrine-url-header h2 {
+  font-size: 1.3em;
+}
 
-  .doctrine-url-body {
-    padding: 20px 24px;
-  }
+.doctrine-url-body {
+  padding: 20px 24px;
+}
 
-  .doctrine-url-actions {
-    padding: 16px 24px 20px;
-    flex-direction: column;
-  }
+.doctrine-url-actions {
+  padding: 16px 24px 20px;
+  flex-direction: column;
+}
 
-  .doctrine-url-actions button {
-    width: 100%;
-    margin-bottom: 8px;
-  }
+.doctrine-url-actions button {
+  width: 100%;
+  margin-bottom: 8px;
+}
+}
+
+/* URL 정보 박스 스타일 */
+.url-info-box {
+  background: #E3F2FD;
+  border: 1px solid #BBDEFB;
+  border-radius: var(--border-radius);
+  padding: 0.75rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.url-info-box i {
+  color: #1976D2;
+  font-size: 1rem;
+}
+
+.url-info-box span {
+  color: #1565C0;
+  flex: 1;
+}
+
+.url-info-box a {
+  color: #1976D2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.url-info-box a:hover {
+  text-decoration: underline;
+}
+
+/* 상세 내용 버튼 툴팁 스타일 */
+.btn-detail[title] {
+  position: relative;
+}
+
+.btn-detail[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 0.5rem;
+}
+
+.btn-detail[title]:hover::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+  margin-bottom: -0.5rem;
+  z-index: 1000;
 }

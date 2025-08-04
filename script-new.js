@@ -264,6 +264,21 @@ window.handleDoctrineDetail = (doctrineId, event) => {
     }
 };
 
+// 교리 상세 내용 URL 수정 핸들러 (우클릭 메뉴)
+window.handleDoctrineDetailEdit = (doctrineId, event) => {
+    if (event) {
+        event.stopPropagation();
+    }
+    console.log('교리 상세 내용 URL 수정:', doctrineId);
+
+    if (window.app) {
+        // URL 수정 모달 표시 (저장된 URL이 있든 없든)
+        window.app.showDoctrineUrlModal(doctrineId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
 // 교리 핵심 URL 저장 핸들러
 window.handleDoctrineUrlSave = (doctrineId) => {
     console.log('교리 핵심 URL 저장:', doctrineId);

@@ -96,4 +96,78 @@ export class Utils {
             }
         }
     };
+
+    // 페이지네이션 유틸리티
+    static pagination = {
+        // 데이터를 페이지별로 분할
+        paginate(data, page = 1, perPage = 10) {
+            const startIndex = (page - 1) * perPage;
+            const endIndex = startIndex + perPage;
+            return {
+                items: data.slice(startIndex, endIndex),
+                totalItems: data.length,
+                totalPages: Math.ceil(data.length / perPage),
+                currentPage: page,
+                perPage: perPage,
+                hasNextPage: page < Math.ceil(data.length / perPage),
+                hasPrevPage: page > 1
+            };
+        },
+
+        // 페이지네이션 HTML 생성
+        generatePaginationHTML(paginationInfo, onPageChange) {
+            const { currentPage, totalPages, hasNextPage, hasPrevPage } = paginationInfo;
+            
+            if (totalPages <= 1) return '';
+
+            let paginationHTML = '<div class="pagination">';
+            
+            // 이전 페이지 버튼
+            if (hasPrevPage) {
+                paginationHTML += `
+                    <button class="pagination-btn prev" onclick="${onPageChange}(${currentPage - 1})">
+                        <i class="fas fa-chevron-left"></i> 이전
+                    </button>
+                `;
+            }
+
+            // 페이지 번호들
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                paginationHTML += `<button class="pagination-btn" onclick="${onPageChange}(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += '<span class="pagination-ellipsis">...</span>';
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="${onPageChange}(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += '<span class="pagination-ellipsis">...</span>';
+                }
+                paginationHTML += `<button class="pagination-btn" onclick="${onPageChange}(${totalPages})">${totalPages}</button>`;
+            }
+
+            // 다음 페이지 버튼
+            if (hasNextPage) {
+                paginationHTML += `
+                    <button class="pagination-btn next" onclick="${onPageChange}(${currentPage + 1})">
+                        다음 <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+            }
+
+            paginationHTML += '</div>';
+            return paginationHTML;
+        }
+    };
 } 

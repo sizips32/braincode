@@ -95,6 +95,31 @@ window.closeMeditationForm = () => {
     }
 };
 
+// 페이지네이션 전역 핸들러들
+window.handleMeditationPageChange = (page) => {
+    if (window.app) {
+        window.app.handleMeditationPageChange(page);
+    }
+};
+
+window.handlePrayerPageChange = (page) => {
+    if (window.app) {
+        window.app.handlePrayerPageChange(page);
+    }
+};
+
+window.handleProphecyPageChange = (page) => {
+    if (window.app) {
+        window.app.handleProphecyPageChange(page);
+    }
+};
+
+window.handleChurchEventPageChange = (page) => {
+    if (window.app) {
+        window.app.handleChurchEventPageChange(page);
+    }
+};
+
 // 네비게이션 클릭 핸들러
 window.handleNavClick = (view, event) => {
     event.preventDefault();

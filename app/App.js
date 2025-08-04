@@ -26,6 +26,14 @@ export class BibleMeditationApp {
     this.currentPrayerTab = 'meditation'; // 기본 탭
     this.currentDoctrineTab = 'doctrines'; // 기본 탭
 
+    // 페이지네이션 상태 관리
+    this.paginationState = {
+      meditation: { page: 1, perPage: 10 },
+      prayer: { page: 1, perPage: 10 },
+      prophecy: { page: 1, perPage: 10 },
+      churchEvent: { page: 1, perPage: 10 }
+    };
+
     this.init();
   }
 
@@ -1111,7 +1119,14 @@ export class BibleMeditationApp {
       `;
     }
 
-    return prayers.map(prayer => `
+    // 최근 순으로 정렬
+    const sortedPrayers = prayers.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // 페이지네이션 적용
+    const { page, perPage } = this.paginationState.prayer;
+    const paginationInfo = Utils.pagination.paginate(sortedPrayers, page, perPage);
+
+    let html = paginationInfo.items.map(prayer => `
       <div class="prayer-item ${prayer.answered ? 'prayer-answered' : ''}" data-id="${prayer.id}">
         <div class="prayer-item-header">
           <div class="prayer-item-title">
@@ -1144,6 +1159,29 @@ export class BibleMeditationApp {
         </div>
       </div>
     `).join('');
+
+    // 페이지네이션 HTML 추가
+    const paginationHTML = Utils.pagination.generatePaginationHTML(
+      paginationInfo, 
+      'handlePrayerPageChange'
+    );
+
+    // 전체 개수 표시
+    html += `
+      <div class="prayer-list-footer">
+        <div class="prayer-count-info">
+          <span class="displayed-count">${paginationInfo.items.length}개 표시</span>
+          <span class="total-count">전체 ${paginationInfo.totalItems}개</span>
+        </div>
+      </div>
+    `;
+
+    // 페이지네이션 추가
+    if (paginationHTML) {
+      html += paginationHTML;
+    }
+
+    return html;
   }
 
   getMeditationListItemHTML(meditation) {
@@ -1172,7 +1210,7 @@ export class BibleMeditationApp {
     `;
   }
 
-  // 묵상 달력용 묵상 리스트 HTML 생성
+  // 묵상 달력용 묵상 리스트 HTML 생성 (페이지네이션 적용)
   getCalendarMeditationListHTML() {
     const meditations = this.meditationModel.getAll();
 
@@ -1183,12 +1221,11 @@ export class BibleMeditationApp {
     // 최근 순으로 정렬
     const sortedMeditations = meditations.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // 최대 10개만 표시
-    const limitedMeditations = sortedMeditations.slice(0, 10);
-    const totalCount = meditations.length;
-    const displayedCount = limitedMeditations.length;
+    // 페이지네이션 적용
+    const { page, perPage } = this.paginationState.meditation;
+    const paginationInfo = Utils.pagination.paginate(sortedMeditations, page, perPage);
 
-    let html = limitedMeditations.map(meditation => `
+    let html = paginationInfo.items.map(meditation => `
       <div class="meditation-item" data-id="${meditation.id}">
         <div class="meditation-header">
           <div class="meditation-date">${Utils.formatDate(meditation.date)}</div>
@@ -1212,26 +1249,31 @@ export class BibleMeditationApp {
       </div>
     `).join('');
 
-    // 전체 개수 표시 및 더보기 안내
-    if (totalCount > 10) {
-      html += `
-        <div class="meditation-list-footer">
-          <div class="meditation-count-info">
-            <span class="displayed-count">최근 ${displayedCount}개</span>
-            <span class="total-count">전체 ${totalCount}개</span>
-          </div>
-          <div class="meditation-list-note">
-            <i class="fas fa-info-circle"></i>
-            더 많은 묵상을 보려면 '검색' 메뉴를 이용하세요.
-          </div>
+    // 페이지네이션 HTML 추가
+    const paginationHTML = Utils.pagination.generatePaginationHTML(
+      paginationInfo, 
+      'handleMeditationPageChange'
+    );
+
+    // 전체 개수 표시
+    html += `
+      <div class="meditation-list-footer">
+        <div class="meditation-count-info">
+          <span class="displayed-count">${paginationInfo.items.length}개 표시</span>
+          <span class="total-count">전체 ${paginationInfo.totalItems}개</span>
         </div>
-      `;
+      </div>
+    `;
+
+    // 페이지네이션 추가
+    if (paginationHTML) {
+      html += paginationHTML;
     }
 
     return html;
   }
 
-  // 교회 이벤트 목록 HTML
+  // 교회 이벤트 목록 HTML (페이지네이션 적용)
   getChurchEventListHTML(events) {
     if (events.length === 0) {
       return `
@@ -1244,7 +1286,14 @@ export class BibleMeditationApp {
       `;
     }
 
-    return events.map(event => `
+    // 최근 순으로 정렬
+    const sortedEvents = events.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // 페이지네이션 적용
+    const { page, perPage } = this.paginationState.churchEvent;
+    const paginationInfo = Utils.pagination.paginate(sortedEvents, page, perPage);
+
+    let html = paginationInfo.items.map(event => `
       <div class="church-event-item" data-id="${event.id}">
         <div class="church-event-header">
           <div class="church-event-title">
@@ -1256,10 +1305,13 @@ export class BibleMeditationApp {
             </div>
           </div>
           <div class="church-event-actions">
-            <button class="btn-edit" onclick="handleChurchEventAction('edit-event', ${event.id})">
+            <button class="btn-view" onclick="handleChurchEventAction('view-event', ${event.id})" title="전체 보기">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-edit" onclick="handleChurchEventAction('edit-event', ${event.id})" title="수정">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-delete" onclick="handleChurchEventAction('delete-event', ${event.id})">
+            <button class="btn-delete" onclick="handleChurchEventAction('delete-event', ${event.id})" title="삭제">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -1269,6 +1321,29 @@ export class BibleMeditationApp {
         </div>
       </div>
     `).join('');
+
+    // 페이지네이션 HTML 추가
+    const paginationHTML = Utils.pagination.generatePaginationHTML(
+      paginationInfo, 
+      'handleChurchEventPageChange'
+    );
+
+    // 전체 개수 표시
+    html += `
+      <div class="church-event-list-footer">
+        <div class="church-event-count-info">
+          <span class="displayed-count">${paginationInfo.items.length}개 표시</span>
+          <span class="total-count">전체 ${paginationInfo.totalItems}개</span>
+        </div>
+      </div>
+    `;
+
+    // 페이지네이션 추가
+    if (paginationHTML) {
+      html += paginationHTML;
+    }
+
+    return html;
   }
 
   // 교리 뷰 HTML 생성
@@ -1379,7 +1454,7 @@ export class BibleMeditationApp {
     `;
   }
 
-  // 예언 글 목록 HTML 생성
+  // 예언 글 목록 HTML 생성 (페이지네이션 적용)
   getProphecyListHTML(prophecies) {
     if (!prophecies || prophecies.length === 0) {
       return `
@@ -1393,7 +1468,14 @@ export class BibleMeditationApp {
       `;
     }
 
-    return prophecies.map(prophecy => `
+    // 최근 순으로 정렬
+    const sortedProphecies = prophecies.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    // 페이지네이션 적용
+    const { page, perPage } = this.paginationState.prophecy;
+    const paginationInfo = Utils.pagination.paginate(sortedProphecies, page, perPage);
+
+    let html = paginationInfo.items.map(prophecy => `
       <div class="prophecy-item" data-id="${prophecy.id}">
         <div class="prophecy-header">
           <h3 class="prophecy-title">${Utils.escapeHtml(prophecy.title)}</h3>
@@ -1435,6 +1517,29 @@ export class BibleMeditationApp {
         </div>
       </div>
     `).join('');
+
+    // 페이지네이션 HTML 추가
+    const paginationHTML = Utils.pagination.generatePaginationHTML(
+      paginationInfo, 
+      'handleProphecyPageChange'
+    );
+
+    // 전체 개수 표시
+    html += `
+      <div class="prophecy-list-footer">
+        <div class="prophecy-count-info">
+          <span class="displayed-count">${paginationInfo.items.length}개 표시</span>
+          <span class="total-count">전체 ${paginationInfo.totalItems}개</span>
+        </div>
+      </div>
+    `;
+
+    // 페이지네이션 추가
+    if (paginationHTML) {
+      html += paginationHTML;
+    }
+
+    return html;
   }
 
   // 이벤트 리스너 메서드들
@@ -1879,6 +1984,9 @@ export class BibleMeditationApp {
       case 'new-event':
         this.showChurchEventForm();
         break;
+      case 'view-event':
+        this.showChurchEventDetail(eventId);
+        break;
       case 'edit-event':
         this.showChurchEventForm(null, eventId);
         break;
@@ -2026,7 +2134,7 @@ export class BibleMeditationApp {
       </div>
     `;
     document.body.appendChild(modal);
-    
+
     // 저장 버튼에 이벤트 리스너 추가
     const saveButton = modal.querySelector('#saveUrlBtn');
     if (saveButton) {
@@ -2124,9 +2232,9 @@ export class BibleMeditationApp {
             <div class="meditation-detail-section">
               <h3>🏷️ 키워드</h3>
               <div class="meditation-detail-keywords">
-                ${meditation.keywords.split(',').map(keyword => 
-                  `<span class="keyword-tag">${Utils.escapeHtml(keyword.trim())}</span>`
-                ).join('')}
+                ${meditation.keywords.split(',').map(keyword =>
+      `<span class="keyword-tag">${Utils.escapeHtml(keyword.trim())}</span>`
+    ).join('')}
               </div>
             </div>
           ` : ''}
@@ -2147,16 +2255,16 @@ export class BibleMeditationApp {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     // 모달 외부 클릭 시 닫기
     modal.addEventListener('click', (event) => {
       if (event.target === modal) {
         modal.remove();
       }
     });
-    
+
     // ESC 키로 닫기
     document.addEventListener('keydown', function closeOnEscape(event) {
       if (event.key === 'Escape') {
@@ -2247,16 +2355,16 @@ export class BibleMeditationApp {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     // 모달 외부 클릭 시 닫기
     modal.addEventListener('click', (event) => {
       if (event.target === modal) {
         modal.remove();
       }
     });
-    
+
     // ESC 키로 닫기
     document.addEventListener('keydown', function closeOnEscape(event) {
       if (event.key === 'Escape') {
@@ -2270,7 +2378,7 @@ export class BibleMeditationApp {
   handleDoctrineUrlSave(doctrineId) {
     // doctrineId를 숫자로 변환
     const numericDoctrineId = parseInt(doctrineId, 10);
-    
+
     const urlInput = document.getElementById('doctrineUrl');
     const url = urlInput.value.trim();
 
@@ -2292,15 +2400,15 @@ export class BibleMeditationApp {
     if (this.doctrineModel.saveDoctrineUrl(numericDoctrineId, url)) {
       // 입력 필드 초기화
       urlInput.value = '';
-      
+
       // 잠시 대기 후 URL 목록 업데이트 (DOM 업데이트 보장)
       setTimeout(() => {
         this.updateUrlList(numericDoctrineId);
       }, 100);
-      
+
       // 성공 메시지 표시
       notificationManager.showSuccess('URL이 저장되었습니다.');
-      
+
       console.log('URL 저장 완료, 목록 업데이트 예약됨');
     } else {
       console.log('URL 저장 실패');
@@ -2310,28 +2418,28 @@ export class BibleMeditationApp {
   // URL 목록 업데이트
   updateUrlList(doctrineId) {
     console.log('URL 목록 업데이트 시작:', doctrineId);
-    
+
     // 여러 방법으로 컨테이너 찾기 시도
     let urlListContainer = document.getElementById(`urlList-${doctrineId}`);
-    
+
     if (!urlListContainer) {
       // querySelector로도 시도
       urlListContainer = document.querySelector(`[id="urlList-${doctrineId}"]`);
     }
-    
+
     console.log('URL 목록 컨테이너 찾음:', !!urlListContainer);
     console.log('찾고 있는 컨테이너 ID:', `urlList-${doctrineId}`);
-    
+
     if (urlListContainer) {
       const urlList = this.doctrineModel.getDoctrineUrlList(doctrineId);
       console.log('현재 URL 목록:', urlList);
-      
+
       const newHTML = this.getUrlListHTML(doctrineId, urlList);
       console.log('새로운 HTML 생성됨');
-      
+
       // innerHTML 업데이트
       urlListContainer.innerHTML = newHTML;
-      
+
       // 업데이트 확인
       console.log('URL 목록 업데이트 완료');
       console.log('업데이트된 컨테이너 내용:', urlListContainer.innerHTML.substring(0, 200) + '...');
@@ -2340,7 +2448,7 @@ export class BibleMeditationApp {
       // DOM에서 모든 urlList-로 시작하는 요소들을 찾아서 로그
       const allUrlLists = document.querySelectorAll('[id^="urlList-"]');
       console.log('현재 페이지의 모든 URL 목록 컨테이너:', Array.from(allUrlLists).map(el => el.id));
-      
+
       // 모달 내부의 모든 div 요소들도 확인
       const modal = document.querySelector('.doctrine-url-modal');
       if (modal) {
@@ -2495,16 +2603,16 @@ export class BibleMeditationApp {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
-    
+
     // 모달 외부 클릭 시 닫기
     modal.addEventListener('click', (event) => {
       if (event.target === modal) {
         modal.remove();
       }
     });
-    
+
     // ESC 키로 닫기
     document.addEventListener('keydown', function closeOnEscape(event) {
       if (event.key === 'Escape') {
@@ -2512,6 +2620,129 @@ export class BibleMeditationApp {
         document.removeEventListener('keydown', closeOnEscape);
       }
     });
+  }
+
+  // 교회 일정 상세 보기 모달
+  showChurchEventDetail(eventId) {
+    const event = this.churchEventModel.getById(eventId);
+    if (!event) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'church-event-detail-modal';
+    modal.innerHTML = `
+      <div class="church-event-detail-content">
+        <div class="church-event-detail-header">
+          <h2>교회 일정 상세 보기</h2>
+          <button class="btn-close" onclick="this.closest('.church-event-detail-modal').remove()">×</button>
+        </div>
+        <div class="church-event-detail-body">
+          <div class="church-event-detail-info">
+            <div class="church-event-detail-category">
+              <i class="fas fa-tag"></i>
+              ${Utils.escapeHtml(event.category)}
+            </div>
+            <div class="church-event-detail-date">
+              <i class="fas fa-calendar"></i>
+              ${Utils.formatDate(event.date)}
+            </div>
+            <div class="church-event-detail-time">
+              <i class="fas fa-clock"></i>
+              ${event.time || '시간 미정'}
+            </div>
+          </div>
+          
+          <div class="church-event-detail-section">
+            <h3>📅 일정 제목</h3>
+            <div class="church-event-detail-title">
+              ${Utils.escapeHtml(event.title)}
+            </div>
+          </div>
+          
+          <div class="church-event-detail-section">
+            <h3>📝 일정 설명</h3>
+            <div class="church-event-detail-description">
+              ${Utils.escapeHtml(event.description || '설명이 없습니다.')}
+            </div>
+          </div>
+          
+          ${event.location ? `
+            <div class="church-event-detail-section">
+              <h3>📍 장소</h3>
+              <div class="church-event-detail-location">
+                ${Utils.escapeHtml(event.location)}
+              </div>
+            </div>
+          ` : ''}
+          
+          ${event.organizer ? `
+            <div class="church-event-detail-section">
+              <h3>👤 담당자</h3>
+              <div class="church-event-detail-organizer">
+                ${Utils.escapeHtml(event.organizer)}
+              </div>
+            </div>
+          ` : ''}
+          
+          ${event.notes ? `
+            <div class="church-event-detail-section">
+              <h3>📋 추가 메모</h3>
+              <div class="church-event-detail-notes">
+                ${Utils.escapeHtml(event.notes)}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="church-event-detail-actions">
+          <button class="btn-secondary" onclick="this.closest('.church-event-detail-modal').remove()">닫기</button>
+          <button class="btn-primary" onclick="handleChurchEventAction('edit-event', ${event.id})">수정하기</button>
+          <button class="btn-meditation" onclick="handleMeditationAction('new', null, null, null, null, ${event.id})">
+            <i class="fas fa-pen"></i> 묵상하기
+          </button>
+          <button class="btn-prayer" onclick="handlePrayerAction('new-prayer', 'meditation')">
+            <i class="fas fa-pray"></i> 기도하기
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // 모달 외부 클릭 시 닫기
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
+    });
+
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function closeOnEscape(event) {
+      if (event.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', closeOnEscape);
+      }
+    });
+  }
+
+  // 페이지네이션 핸들러들
+  handleMeditationPageChange(page) {
+    this.paginationState.meditation.page = page;
+    this.updateCalendarMeditations();
+  }
+
+  handlePrayerPageChange(page) {
+    this.paginationState.prayer.page = page;
+    this.refreshCurrentView();
+  }
+
+  handleProphecyPageChange(page) {
+    this.paginationState.prophecy.page = page;
+    this.refreshCurrentView();
+  }
+
+  handleChurchEventPageChange(page) {
+    this.paginationState.churchEvent.page = page;
+    this.refreshCurrentView();
   }
 
   // 예언 폼 제출 처리

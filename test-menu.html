@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메뉴 기능 테스트</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; font-family: monospace; }
+        .nav-test { margin: 10px 0; }
+        .nav-test a { display: inline-block; margin: 5px; padding: 10px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>메뉴 기능 테스트</h1>
+        
+        <div class="test-section">
+            <h3>1. 앱 초기화 상태 확인</h3>
+            <button onclick="checkAppStatus()" class="btn-primary">앱 상태 확인</button>
+            <div id="appStatus" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 메뉴 이벤트 리스너 상태 확인</h3>
+            <button onclick="checkMenuListeners()" class="btn-primary">메뉴 리스너 확인</button>
+            <div id="menuListenerStatus" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 메뉴 클릭 테스트</h3>
+            <div class="nav-test">
+                <a href="#" class="nav-link" data-view="home"><i class="fas fa-home"></i> 홈</a>
+                <a href="#" class="nav-link" data-view="calendar"><i class="fas fa-calendar-alt"></i> 달력</a>
+                <a href="#" class="nav-link" data-view="bible-list"><i class="fas fa-book-bible"></i> 성경 목록</a>
+                <a href="#" class="nav-link" data-view="prayer"><i class="fas fa-pray"></i> 기도</a>
+                <a href="#" class="nav-link" data-view="doctrine"><i class="fas fa-book-open"></i> 교리</a>
+                <a href="#" class="nav-link" data-view="search"><i class="fas fa-search"></i> 검색</a>
+            </div>
+            <div id="menuClickResult" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 수동 네비게이션 테스트</h3>
+            <button onclick="testManualNavigation()" class="btn-primary">수동 네비게이션 테스트</button>
+            <div id="manualNavResult" class="log"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. 콘솔 로그 확인</h3>
+            <p>브라우저 개발자 도구의 콘솔을 열어서 로그를 확인하세요.</p>
+            <button onclick="clearLogs()" class="btn-primary">로그 영역 초기화</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { BibleMeditationApp } from './app/App.js';
+        
+        // 앱 초기화
+        window.app = new BibleMeditationApp();
+        
+        // 로그 함수
+        function log(message, elementId) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            element.innerHTML += `[${timestamp}] ${message}\n`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+        
+        // 1. 앱 상태 확인
+        window.checkAppStatus = function() {
+            const statusDiv = document.getElementById('appStatus');
+            const status = {
+                appExists: !!window.app,
+                navigateToViewExists: typeof window.app?.navigateToView === 'function',
+                currentView: window.app?.currentView || 'none'
+            };
+            
+            statusDiv.innerHTML = `
+                <pre>${JSON.stringify(status, null, 2)}</pre>
+            `;
+            
+            console.log('앱 상태:', status);
+        };
+        
+        // 2. 메뉴 이벤트 리스너 확인
+        window.checkMenuListeners = function() {
+            const resultDiv = document.getElementById('menuListenerStatus');
+            
+            try {
+                const navLinks = document.querySelectorAll('.nav-link[data-view]');
+                log(`메뉴 링크 개수: ${navLinks.length}`, 'menuListenerStatus');
+                
+                navLinks.forEach((link, index) => {
+                    const view = link.dataset.view;
+                    const hasClickListener = link.onclick !== null || link._clickListener;
+                    log(`메뉴 ${index + 1} (${view}): 클릭 리스너 ${hasClickListener ? '있음' : '없음'}`, 'menuListenerStatus');
+                });
+                
+                // 이벤트 리스너 수동 설정 테스트
+                log('이벤트 리스너 수동 설정 시도...', 'menuListenerStatus');
+                setupNavigationListeners();
+                log('이벤트 리스너 수동 설정 완료', 'menuListenerStatus');
+                
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`, 'menuListenerStatus');
+            }
+        };
+        
+        // 3. 수동 네비게이션 테스트
+        window.testManualNavigation = function() {
+            const resultDiv = document.getElementById('manualNavResult');
+            
+            try {
+                log('수동 네비게이션 테스트 시작', 'manualNavResult');
+                
+                if (window.app && window.app.navigateToView) {
+                    log('navigateToView 함수 호출 시도...', 'manualNavResult');
+                    window.app.navigateToView('home');
+                    log('navigateToView 함수 호출 완료', 'manualNavResult');
+                } else {
+                    log('❌ navigateToView 함수가 없음', 'manualNavResult');
+                }
+                
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`, 'manualNavResult');
+            }
+        };
+        
+        // 4. 로그 초기화
+        window.clearLogs = function() {
+            document.querySelectorAll('.log').forEach(element => {
+                element.innerHTML = '';
+            });
+        };
+        
+        // 페이지 로드 시 초기 상태 로그
+        log('메뉴 테스트 페이지 로드 완료', 'appStatus');
+        log(`window.app 존재: ${!!window.app}`, 'appStatus');
+        log(`navigateToView 존재: ${typeof window.app?.navigateToView}`, 'appStatus');
+        
+        // DOM 로딩 완료 후 메뉴 이벤트 리스너 설정
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                log('DOM 로딩 완료, 메뉴 이벤트 리스너 설정', 'appStatus');
+                setupNavigationListeners();
+            });
+        } else {
+            log('DOM 이미 로드됨, 메뉴 이벤트 리스너 설정', 'appStatus');
+            setupNavigationListeners();
+        }
+        
+    </script>
+    
+    <!-- script-new.js 로드 -->
+    <script type="module" src="script-new.js"></script>
+</body>
+</html> 

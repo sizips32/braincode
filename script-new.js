@@ -308,6 +308,19 @@ window.handleDoctrineDetailEdit = (doctrineId, event) => {
             console.error('앱 또는 메서드가 없음');
         }
     };
+    
+    // 메뉴 이벤트 리스너 설정 (DOM 로딩 완료 후)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM 로딩 완료, 메뉴 이벤트 리스너 설정 시작');
+            setupNavigationListeners();
+            console.log('메뉴 이벤트 리스너 설정 완료');
+        });
+    } else {
+        console.log('DOM 이미 로드됨, 메뉴 이벤트 리스너 설정 시작');
+        setupNavigationListeners();
+        console.log('메뉴 이벤트 리스너 설정 완료');
+    }
 })();
 
 // 교리 핵심 URL 삭제 핸들러

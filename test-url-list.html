@@ -40,8 +40,25 @@
             }
         };
         
-        console.log('테스트 페이지 로드됨');
+        // URL 저장 테스트 함수
+        window.testUrlSave = function() {
+            const urlInput = document.getElementById('doctrineUrl');
+            if (urlInput) {
+                urlInput.value = 'https://example.com/test-' + Date.now();
+                console.log('테스트 URL 입력됨:', urlInput.value);
+            }
+        };
+        
+        console.log('테스트 페이지 로드됨 (포트 8001)');
         console.log('사용 가능한 교리:', window.app.doctrineModel.getAll());
+        
+        // 페이지 로드 완료 후 자동으로 모달 열기
+        setTimeout(() => {
+            if (window.app && window.app.doctrineModel.getAll().length > 0) {
+                console.log('자동으로 테스트 모달 열기');
+                window.testUrlModal();
+            }
+        }, 1000);
     </script>
 </body>
 </html> 

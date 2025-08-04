@@ -2066,13 +2066,15 @@ export class BibleMeditationApp {
       // 입력 필드 초기화
       urlInput.value = '';
       
-      // URL 목록 업데이트
-      this.updateUrlList(numericDoctrineId);
+      // 잠시 대기 후 URL 목록 업데이트 (DOM 업데이트 보장)
+      setTimeout(() => {
+        this.updateUrlList(numericDoctrineId);
+      }, 100);
       
       // 성공 메시지 표시
       notificationManager.showSuccess('URL이 저장되었습니다.');
       
-      console.log('URL 저장 완료, 목록 업데이트됨');
+      console.log('URL 저장 완료, 목록 업데이트 예약됨');
     } else {
       console.log('URL 저장 실패');
     }
@@ -2082,7 +2084,14 @@ export class BibleMeditationApp {
   updateUrlList(doctrineId) {
     console.log('URL 목록 업데이트 시작:', doctrineId);
     
-    const urlListContainer = document.getElementById(`urlList-${doctrineId}`);
+    // 여러 방법으로 컨테이너 찾기 시도
+    let urlListContainer = document.getElementById(`urlList-${doctrineId}`);
+    
+    if (!urlListContainer) {
+      // querySelector로도 시도
+      urlListContainer = document.querySelector(`[id="urlList-${doctrineId}"]`);
+    }
+    
     console.log('URL 목록 컨테이너 찾음:', !!urlListContainer);
     console.log('찾고 있는 컨테이너 ID:', `urlList-${doctrineId}`);
     
@@ -2093,13 +2102,24 @@ export class BibleMeditationApp {
       const newHTML = this.getUrlListHTML(doctrineId, urlList);
       console.log('새로운 HTML 생성됨');
       
+      // innerHTML 업데이트
       urlListContainer.innerHTML = newHTML;
+      
+      // 업데이트 확인
       console.log('URL 목록 업데이트 완료');
+      console.log('업데이트된 컨테이너 내용:', urlListContainer.innerHTML.substring(0, 200) + '...');
     } else {
       console.error('URL 목록 컨테이너를 찾을 수 없음:', `urlList-${doctrineId}`);
       // DOM에서 모든 urlList-로 시작하는 요소들을 찾아서 로그
       const allUrlLists = document.querySelectorAll('[id^="urlList-"]');
       console.log('현재 페이지의 모든 URL 목록 컨테이너:', Array.from(allUrlLists).map(el => el.id));
+      
+      // 모달 내부의 모든 div 요소들도 확인
+      const modal = document.querySelector('.doctrine-url-modal');
+      if (modal) {
+        const modalDivs = modal.querySelectorAll('div');
+        console.log('모달 내부의 div 요소들:', Array.from(modalDivs).map(el => ({ id: el.id, className: el.className })));
+      }
     }
   }
 

@@ -1076,17 +1076,8 @@
     </div>
   </div>
 
-  <!-- 전역 함수들이 App.js 로드 후에 정의되도록 순서 조정 -->
-  <script type="module">
-    // App.js 먼저 로드
-    import { BibleMeditationApp } from './app/App.js';
-    
-    // 앱 초기화
-    window.app = new BibleMeditationApp();
-    
-    // 앱 초기화 후 전역 함수들 정의
-    import('./script-new.js');
-  </script>
+  <!-- 모듈화된 구조로 통합 -->
+  <script type="module" src="./script-new.js"></script>
   <script>
     let isMusicPlaying = false;
 

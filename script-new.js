@@ -57,10 +57,13 @@ function setupNavigationListeners() {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const view = event.currentTarget.dataset.view;
-            console.log('네비게이션 클릭됨:', view);
+            console.log('네비게이션 클릭됨:', view, '링크:', event.currentTarget);
 
             if (window.app && view) {
+                console.log('앱 인스턴스 존재, navigateToView 호출');
                 window.app.navigateToView(view, event);
+            } else {
+                console.error('앱 인스턴스가 없거나 view가 없음:', { app: !!window.app, view });
             }
         });
     });
@@ -209,6 +212,105 @@ window.handlePrayerSubmit = (event) => {
         window.app.handlePrayerSubmit(event);
     } else {
         console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 성경 책 클릭 핸들러 (script.js에서 이관)
+window.handleBookClick = (bookName) => {
+    console.log('성경 책 클릭:', bookName);
+    
+    if (window.app) {
+        window.app.showMeditationForm(new Date().toISOString().split('T')[0], bookName);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 성경별 상세 뷰 이동
+window.handleBibleDetailBack = () => {
+    if (window.app) {
+        window.app.navigateToView('bible-list');
+    }
+};
+
+// 성경별 묵상 작성
+window.handleBibleMeditation = (bookName) => {
+    if (window.app) {
+        window.app.showMeditationForm(new Date().toISOString().split('T')[0], bookName);
+    }
+};
+
+// 묵상 편집/삭제 핸들러
+window.handleMeditationEdit = (meditationId) => {
+    if (window.app) {
+        window.app.handleMeditationAction('edit', meditationId);
+    }
+};
+
+window.handleMeditationDelete = (meditationId) => {
+    if (window.app) {
+        window.app.handleMeditationAction('delete', meditationId);
+    }
+};
+
+// 묵상 상세 보기
+window.displayMeditation = (meditation) => {
+    if (window.app) {
+        window.app.showMeditationDetail(meditation);
+    }
+};
+
+// 교회 이벤트 핸들러
+window.handleChurchEventAction = (action, eventId = null) => {
+    console.log('교회 이벤트 액션:', action, eventId);
+    
+    if (window.app) {
+        switch(action) {
+            case 'new-event':
+                window.app.showChurchEventForm();
+                break;
+            case 'edit-event':
+                window.app.editChurchEvent(eventId);
+                break;
+            case 'delete-event':
+                window.app.deleteChurchEvent(eventId);
+                break;
+        }
+    }
+};
+
+window.closeChurchEventForm = () => {
+    if (window.app) {
+        window.app.closeChurchEventForm();
+    }
+};
+
+// 예언의 신 핸들러
+window.handleProphecySubmit = (event) => {
+    if (window.app) {
+        window.app.handleProphecySubmit(event);
+    }
+};
+
+window.closeProphecyForm = () => {
+    if (window.app) {
+        window.app.closeProphecyForm();
+    }
+};
+
+window.handleProphecyAction = (action, prophecyId = null) => {
+    if (window.app) {
+        switch(action) {
+            case 'new-prophecy':
+                window.app.showProphecyForm();
+                break;
+            case 'edit-prophecy':
+                window.app.editProphecy(prophecyId);
+                break;
+            case 'delete-prophecy':
+                window.app.deleteProphecy(prophecyId);
+                break;
+        }
     }
 };
 

@@ -125,8 +125,9 @@ export class BibleMeditationApp {
         this.showSearchView();
         break;
       case 'church-events':
-        console.log('교회 행사와 사역 뷰로 이동');
+        console.log('교회 행사와 사역 뷰로 이동 시작');
         this.showChurchEventsView();
+        console.log('교회 행사와 사역 뷰로 이동 완료');
         break;
       case 'doctrine':
         console.log('교리 뷰로 이동');
@@ -546,31 +547,51 @@ export class BibleMeditationApp {
 
   // 교회 행사와 사역 뷰 표시
   showChurchEventsView() {
+    console.log('showChurchEventsView 함수 시작');
+    
     const container = document.querySelector('.meditation-container');
     const calendarContainer = document.querySelector('.calendar');
+    
+    console.log('컨테이너 찾음:', !!container);
+    console.log('캘린더 컨테이너 찾음:', !!calendarContainer);
 
     // 기존 묵상 캘린더 숨기기
     if (this.calendar) {
+      console.log('기존 묵상 캘린더 제거');
       this.calendar.destroy();
       this.calendar = null;
     }
 
+    console.log('교회 이벤트 뷰 HTML 생성 중...');
     container.innerHTML = this.getChurchEventsViewHTML();
+    console.log('교회 이벤트 뷰 HTML 생성 완료');
+    
     calendarContainer.style.display = 'grid';
     calendarContainer.className = 'calendar'; // 기존 달력 스타일 적용
+    console.log('캘린더 컨테이너 스타일 설정 완료');
 
     // ChurchEventCalendar 인스턴스 생성 또는 업데이트
     if (!this.churchCalendar) {
-      this.churchCalendar = new ChurchEventCalendar(calendarContainer, {
-        onDateSelect: (date) => {
-          console.log('교회 달력 날짜 클릭:', date);
-          this.showChurchEventForm(date);
-        },
-        onMonthChange: () => this.updateChurchCalendarEvents()
-      });
+      console.log('ChurchEventCalendar 인스턴스 생성 중...');
+      try {
+        this.churchCalendar = new ChurchEventCalendar(calendarContainer, {
+          onDateSelect: (date) => {
+            console.log('교회 달력 날짜 클릭:', date);
+            this.showChurchEventForm(date);
+          },
+          onMonthChange: () => this.updateChurchCalendarEvents()
+        });
+        console.log('ChurchEventCalendar 인스턴스 생성 완료');
+      } catch (error) {
+        console.error('ChurchEventCalendar 생성 중 오류:', error);
+      }
+    } else {
+      console.log('기존 ChurchEventCalendar 인스턴스 사용');
     }
 
+    console.log('교회 캘린더 이벤트 업데이트 중...');
     this.updateChurchCalendarEvents();
+    console.log('showChurchEventsView 함수 완료');
   }
 
   // 교리 뷰 표시

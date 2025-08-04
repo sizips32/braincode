@@ -2006,11 +2006,20 @@ export class BibleMeditationApp {
         </div>
         <div class="doctrine-url-actions">
           <button class="btn-secondary" onclick="this.closest('.doctrine-url-modal').remove()">취소</button>
-          <button class="btn-primary" onclick="handleDoctrineUrlSave('${doctrineId}')">저장</button>
+          <button class="btn-primary" id="saveUrlBtn" data-doctrine-id="${doctrineId}">저장</button>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
+    
+    // 저장 버튼에 이벤트 리스너 추가
+    const saveButton = modal.querySelector('#saveUrlBtn');
+    if (saveButton) {
+      saveButton.addEventListener('click', () => {
+        console.log('저장 버튼 클릭됨, doctrineId:', doctrineId);
+        this.handleDoctrineUrlSave(doctrineId);
+      });
+    }
   }
 
   // URL 목록 HTML 생성

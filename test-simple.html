@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>간단한 URL 저장 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        input {
+            padding: 8px;
+            width: 300px;
+            margin: 5px;
+        }
+
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>URL 저장 기능 간단 테스트</h1>
+
+    <div class="test-section">
+        <h3>1. 전역 함수 직접 호출 테스트</h3>
+        <button onclick="testDirectCall()">전역 함수 직접 호출</button>
+        <div id="directCallResult" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. 모달 버튼 클릭 시뮬레이션</h3>
+        <button onclick="testModalButton()">모달 버튼 클릭 시뮬레이션</button>
+        <div id="modalButtonResult" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. 실제 모달 생성 테스트</h3>
+        <button onclick="testRealModal()">실제 모달 생성</button>
+        <div id="realModalResult" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. 콘솔 로그 확인</h3>
+        <p>브라우저 개발자 도구의 콘솔을 열어서 로그를 확인하세요.</p>
+        <button onclick="clearLogs()">로그 영역 초기화</button>
+    </div>
+
+    <script type="module">
+        import { BibleMeditationApp } from './app/App.js';
+
+        // 앱 초기화
+        window.app = new BibleMeditationApp();
+
+        // 로그 함수
+        function log(message, elementId) {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            element.innerHTML += `[${timestamp}] ${message}\n`;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        // 1. 전역 함수 직접 호출 테스트
+        window.testDirectCall = function () {
+            log('=== 전역 함수 직접 호출 테스트 시작 ===', 'directCallResult');
+
+            try {
+                log('window.handleDoctrineUrlSave 존재 여부 확인...', 'directCallResult');
+                log(`typeof window.handleDoctrineUrlSave: ${typeof window.handleDoctrineUrlSave}`, 'directCallResult');
+
+                if (typeof window.handleDoctrineUrlSave === 'function') {
+                    log('전역 함수 존재함. 호출 시도...', 'directCallResult');
+                    window.handleDoctrineUrlSave(1);
+                    log('전역 함수 호출 완료', 'directCallResult');
+                } else {
+                    log('❌ 전역 함수가 존재하지 않음!', 'directCallResult');
+                }
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`, 'directCallResult');
+            }
+        };
+
+        // 2. 모달 버튼 클릭 시뮬레이션
+        window.testModalButton = function () {
+            log('=== 모달 버튼 클릭 시뮬레이션 시작 ===', 'modalButtonResult');
+
+            try {
+                // 모달 HTML 생성
+                const modalHTML = `
+                    <div class="doctrine-url-modal">
+                        <div class="doctrine-url-content">
+                            <div class="doctrine-url-body">
+                                <input type="url" id="doctrineUrl" value="https://test.com" />
+                            </div>
+                            <div class="doctrine-url-actions">
+                                <button class="btn-primary" onclick="handleDoctrineUrlSave('1')">저장</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // 모달을 body에 추가
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                log('모달 HTML 생성 및 추가 완료', 'modalButtonResult');
+
+                // 저장 버튼 찾기
+                const saveButton = document.querySelector('.doctrine-url-modal .btn-primary');
+                if (saveButton) {
+                    log('저장 버튼 찾음. 클릭 시뮬레이션...', 'modalButtonResult');
+                    saveButton.click();
+                    log('저장 버튼 클릭 완료', 'modalButtonResult');
+                } else {
+                    log('❌ 저장 버튼을 찾을 수 없음!', 'modalButtonResult');
+                }
+
+                // 모달 제거
+                setTimeout(() => {
+                    const modal = document.querySelector('.doctrine-url-modal');
+                    if (modal) {
+                        modal.remove();
+                        log('테스트 모달 제거 완료', 'modalButtonResult');
+                    }
+                }, 2000);
+
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`, 'modalButtonResult');
+            }
+        };
+
+        // 3. 실제 모달 생성 테스트
+        window.testRealModal = function () {
+            log('=== 실제 모달 생성 테스트 시작 ===', 'realModalResult');
+
+            try {
+                // 테스트용 교리 데이터 생성
+                const testDoctrine = {
+                    id: 999,
+                    title: '테스트 교리',
+                    category: '테스트 카테고리'
+                };
+
+                // DoctrineModel에 테스트 데이터 추가
+                if (window.app.doctrineModel) {
+                    window.app.doctrineModel.doctrines.push(testDoctrine);
+                    log('테스트 교리 데이터 추가 완료', 'realModalResult');
+
+                    // 실제 모달 생성
+                    window.app.showDoctrineUrlModal(999);
+                    log('실제 모달 생성 완료', 'realModalResult');
+                } else {
+                    log('❌ DoctrineModel이 존재하지 않음!', 'realModalResult');
+                }
+
+            } catch (error) {
+                log(`❌ 오류 발생: ${error.message}`, 'realModalResult');
+            }
+        };
+
+        // 4. 로그 초기화
+        window.clearLogs = function () {
+            document.querySelectorAll('.log').forEach(element => {
+                element.innerHTML = '';
+            });
+        };
+
+        // 페이지 로드 시 초기 상태 로그
+        log('페이지 로드 완료', 'directCallResult');
+        log(`window.app 존재: ${!!window.app}`, 'directCallResult');
+        log(`window.handleDoctrineUrlSave 존재: ${typeof window.handleDoctrineUrlSave}`, 'directCallResult');
+
+    </script>
+</body>
+
+</html>

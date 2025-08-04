@@ -279,21 +279,36 @@ window.handleDoctrineDetailEdit = (doctrineId, event) => {
     }
 };
 
-// 교리 핵심 URL 저장 핸들러
-window.handleDoctrineUrlSave = (doctrineId) => {
-    console.log('=== 전역 handleDoctrineUrlSave 호출됨 ===');
-    console.log('전달받은 doctrineId:', doctrineId);
-    console.log('doctrineId 타입:', typeof doctrineId);
-    console.log('window.app 존재 여부:', !!window.app);
+// 전역 함수들을 즉시 정의하여 모듈 로딩 순서 문제 해결
+(function() {
+    // 교리 핵심 URL 저장 핸들러
+    window.handleDoctrineUrlSave = (doctrineId) => {
+        console.log('=== 전역 handleDoctrineUrlSave 호출됨 ===');
+        console.log('전달받은 doctrineId:', doctrineId);
+        console.log('doctrineId 타입:', typeof doctrineId);
+        console.log('window.app 존재 여부:', !!window.app);
 
-    if (window.app) {
-        console.log('앱 인스턴스에서 handleDoctrineUrlSave 호출');
-        window.app.handleDoctrineUrlSave(doctrineId);
-    } else {
-        console.error('앱이 초기화되지 않았습니다.');
-        console.error('window.app:', window.app);
-    }
-};
+        if (window.app) {
+            console.log('앱 인스턴스에서 handleDoctrineUrlSave 호출');
+            window.app.handleDoctrineUrlSave(doctrineId);
+        } else {
+            console.error('앱이 초기화되지 않았습니다.');
+            console.error('window.app:', window.app);
+        }
+    };
+
+    console.log('전역 함수 handleDoctrineUrlSave 정의 완료');
+    
+    // 백업용 전역 함수 (onclick 이벤트용)
+    window.handleDoctrineUrlSaveBackup = (doctrineId) => {
+        console.log('백업 전역 함수 호출됨:', doctrineId);
+        if (window.app && window.app.handleDoctrineUrlSave) {
+            window.app.handleDoctrineUrlSave(doctrineId);
+        } else {
+            console.error('앱 또는 메서드가 없음');
+        }
+    };
+})();
 
 // 교리 핵심 URL 삭제 핸들러
 window.handleDoctrineUrlDelete = (doctrineId) => {

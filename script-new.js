@@ -250,11 +250,11 @@ window.handleDoctrineDetail = (doctrineId, event) => {
     console.log('교리 상세 내용 처리:', doctrineId);
 
     if (window.app) {
-        const hasUrl = window.app.doctrineModel.getDoctrineUrl(doctrineId);
+        const urlList = window.app.doctrineModel.getDoctrineUrlList(doctrineId);
 
-        if (hasUrl) {
-            // URL이 저장되어 있으면 해당 URL로 이동
-            window.open(hasUrl, '_blank');
+        if (urlList && urlList.length > 0) {
+            // URL 목록이 있으면 첫 번째 URL로 이동
+            window.open(urlList[0].url, '_blank');
         } else {
             // URL이 없으면 입력 모달 표시
             window.app.showDoctrineUrlModal(doctrineId);
@@ -296,6 +296,20 @@ window.handleDoctrineUrlDelete = (doctrineId) => {
 
     if (window.app) {
         window.app.handleDoctrineUrlDelete(doctrineId);
+    } else {
+        console.error('앱이 초기화되지 않았습니다.');
+    }
+};
+
+// 교리 URL 항목 삭제 핸들러
+window.handleDoctrineUrlItemDelete = (doctrineId, urlId) => {
+    console.log('교리 URL 항목 삭제:', doctrineId, urlId);
+
+    if (window.app) {
+        if (confirm('이 URL을 삭제하시겠습니까?')) {
+            window.app.doctrineModel.removeDoctrineUrl(doctrineId, urlId);
+            window.app.updateUrlList(doctrineId);
+        }
     } else {
         console.error('앱이 초기화되지 않았습니다.');
     }

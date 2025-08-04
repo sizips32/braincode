@@ -302,34 +302,104 @@ export class DoctrineModel {
         return false;
     }
 
-    // 교리 상세 내용 URL 저장
+    // 교리 상세 내용 URL 목록 저장
     saveDoctrineUrl(id, url) {
         const index = this.doctrines.findIndex(doctrine => doctrine.id === id);
         if (index !== -1) {
+            // URL 목록 초기화 (없는 경우)
+            if (!this.doctrines[index].urlList) {
+                this.doctrines[index].urlList = [];
+            }
+            
+            // 중복 URL 체크
+            const existingUrl = this.doctrines[index].urlList.find(item => item.url === url);
+            if (existingUrl) {
+                notificationManager.showError('이미 저장된 URL입니다.');
+                return false;
+            }
+            
+            // 새 URL 추가
+            const newUrlItem = {
+                id: Date.now().toString(),
+                url: url,
+                addedAt: new Date().toISOString(),
+                title: this.extractTitleFromUrl(url)
+            };
+            
+            this.doctrines[index].urlList.push(newUrlItem);
+            
+            // 기존 coreUrl도 유지 (하위 호환성)
             this.doctrines[index].coreUrl = url;
+            
             this.save();
-            notificationManager.showSuccess('교리 상세 내용 URL이 저장되었습니다.');
+            notificationManager.showSuccess('URL이 저장되었습니다.');
             return true;
         }
         return false;
     }
 
-    // 교리 상세 내용 URL 가져오기
+    // 교리 상세 내용 URL 목록 가져오기
+    getDoctrineUrlList(id) {
+        const doctrine = this.getById(id);
+        return doctrine ? (doctrine.urlList || []) : [];
+    }
+
+    // 교리 상세 내용 URL 가져오기 (하위 호환성)
     getDoctrineUrl(id) {
         const doctrine = this.getById(id);
         return doctrine ? doctrine.coreUrl : null;
     }
 
     // 교리 상세 내용 URL 삭제
-    removeDoctrineUrl(id) {
+    removeDoctrineUrl(id, urlId = null) {
         const index = this.doctrines.findIndex(doctrine => doctrine.id === id);
         if (index !== -1) {
-            delete this.doctrines[index].coreUrl;
+            if (urlId && this.doctrines[index].urlList) {
+                // 특정 URL 삭제
+                this.doctrines[index].urlList = this.doctrines[index].urlList.filter(item => item.id !== urlId);
+                
+                // URL 목록이 비어있으면 coreUrl도 삭제
+                if (this.doctrines[index].urlList.length === 0) {
+                    delete this.doctrines[index].coreUrl;
+                } else {
+                    // 첫 번째 URL을 coreUrl로 설정
+                    this.doctrines[index].coreUrl = this.doctrines[index].urlList[0].url;
+                }
+            } else {
+                // 전체 URL 삭제 (하위 호환성)
+                delete this.doctrines[index].coreUrl;
+                delete this.doctrines[index].urlList;
+            }
+            
             this.save();
-            notificationManager.showSuccess('교리 상세 내용 URL이 삭제되었습니다.');
+            notificationManager.showSuccess('URL이 삭제되었습니다.');
             return true;
         }
         return false;
+    }
+
+    // URL에서 제목 추출
+    extractTitleFromUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            const hostname = urlObj.hostname;
+            const pathname = urlObj.pathname;
+            
+            // 도메인에서 제목 추출
+            let title = hostname.replace('www.', '');
+            
+            // 경로가 있으면 추가
+            if (pathname && pathname !== '/') {
+                const pathParts = pathname.split('/').filter(part => part);
+                if (pathParts.length > 0) {
+                    title += ' - ' + pathParts[pathParts.length - 1].replace(/[-_]/g, ' ');
+                }
+            }
+            
+            return title;
+        } catch (e) {
+            return '알 수 없는 페이지';
+        }
     }
 
     resetToDefault() {

@@ -1926,7 +1926,8 @@ export class BibleMeditationApp {
     const doctrine = this.doctrineModel.getById(doctrineId);
     if (!doctrine) return;
 
-    const hasUrl = this.doctrineModel.getDoctrineUrl(doctrineId);
+    const urlList = this.doctrineModel.getDoctrineUrlList(doctrineId);
+    const hasUrls = urlList && urlList.length > 0;
 
     const modal = document.createElement('div');
     modal.className = 'doctrine-detail-modal';
@@ -1940,18 +1941,30 @@ export class BibleMeditationApp {
           <div class="doctrine-category">카테고리: ${doctrine.category}</div>
           <div class="doctrine-content">${doctrine.content}</div>
           <div class="doctrine-reference">성경 구절: ${doctrine.reference}</div>
-          ${hasUrl ? `<div class="doctrine-url-info">
+          ${hasUrls ? `
+          <div class="doctrine-url-info">
             <i class="fas fa-link"></i> 
-            <a href="${hasUrl}" target="_blank" class="doctrine-url-link">저장된 상세 자료 보기</a>
-          </div>` : ''}
+            <span>저장된 상세 자료 (${urlList.length}개)</span>
+          </div>
+          <div class="doctrine-url-list">
+            ${urlList.map(urlItem => `
+              <div class="doctrine-url-item">
+                <a href="${urlItem.url}" target="_blank" class="doctrine-url-link">
+                  <i class="fas fa-external-link-alt"></i>
+                  ${urlItem.title}
+                </a>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
         </div>
         <div class="doctrine-detail-actions">
-          <button class="btn-detail ${hasUrl ? 'btn-detail-has-url' : ''}" 
+          <button class="btn-detail ${hasUrls ? 'btn-detail-has-url' : ''}" 
                   onclick="handleDoctrineDetail(${doctrine.id})"
                   oncontextmenu="handleDoctrineDetailEdit(${doctrine.id}); return false;"
-                  title="${hasUrl ? '클릭: 저장된 URL로 이동 | 우클릭: URL 수정' : '클릭: URL 입력 모달 열기'}">
+                  title="${hasUrls ? '클릭: 첫 번째 URL로 이동 | 우클릭: URL 관리' : '클릭: URL 입력 모달 열기'}">
             <i class="fas fa-file-alt"></i> 상세 내용
-            ${hasUrl ? '<span class="url-indicator">✓</span>' : ''}
+            ${hasUrls ? '<span class="url-indicator">✓</span>' : ''}
           </button>
         </div>
       </div>
@@ -1964,7 +1977,7 @@ export class BibleMeditationApp {
     const doctrine = this.doctrineModel.getById(doctrineId);
     if (!doctrine) return;
 
-    const currentUrl = this.doctrineModel.getDoctrineUrl(doctrineId);
+    const urlList = this.doctrineModel.getDoctrineUrlList(doctrineId);
 
     const modal = document.createElement('div');
     modal.className = 'doctrine-url-modal';
@@ -1981,24 +1994,49 @@ export class BibleMeditationApp {
           </div>
           <div class="url-input-group">
             <label for="doctrineUrl">교리 상세 내용 URL:</label>
-            <input type="url" id="doctrineUrl" placeholder="https://example.com" value="${currentUrl || ''}" />
-            <small>교리와 관련된 상세 자료의 URL을 입력하세요. 저장 후에는 상세 내용 버튼을 클릭하면 해당 페이지로 바로 이동합니다.</small>
+            <input type="url" id="doctrineUrl" placeholder="https://example.com" value="" />
+            <small>교리와 관련된 상세 자료의 URL을 입력하세요. 저장 후에는 목록에서 클릭하여 해당 페이지로 이동할 수 있습니다.</small>
           </div>
-          ${currentUrl ? `
-          <div class="url-info-box">
-            <i class="fas fa-info-circle"></i>
-            <span>현재 저장된 URL: <a href="${currentUrl}" target="_blank">${currentUrl}</a></span>
+          <div class="url-list-container">
+            <h4>저장된 URL 목록</h4>
+            <div class="url-list" id="urlList-${doctrineId}">
+              ${this.getUrlListHTML(doctrineId, urlList)}
+            </div>
           </div>
-          ` : ''}
         </div>
         <div class="doctrine-url-actions">
           <button class="btn-secondary" onclick="this.closest('.doctrine-url-modal').remove()">취소</button>
-          ${currentUrl ? '<button class="btn-danger" onclick="handleDoctrineUrlDelete(' + doctrineId + ')">삭제</button>' : ''}
-          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">${currentUrl ? '수정' : '저장'}</button>
+          <button class="btn-primary" onclick="handleDoctrineUrlSave(' + doctrineId + ')">저장</button>
         </div>
       </div>
     `;
     document.body.appendChild(modal);
+  }
+
+  // URL 목록 HTML 생성
+  getUrlListHTML(doctrineId, urlList) {
+    if (!urlList || urlList.length === 0) {
+      return '<div class="no-urls">저장된 URL이 없습니다.</div>';
+    }
+
+    return urlList.map(urlItem => `
+      <div class="url-item" data-url-id="${urlItem.id}">
+        <div class="url-content">
+          <div class="url-title">${urlItem.title}</div>
+          <div class="url-link">
+            <a href="${urlItem.url}" target="_blank" onclick="event.stopPropagation();">
+              ${urlItem.url}
+            </a>
+          </div>
+          <div class="url-date">${this.formatDate(urlItem.addedAt)}</div>
+        </div>
+        <div class="url-actions">
+          <button class="btn-url-delete" onclick="handleDoctrineUrlItemDelete('${doctrineId}', '${urlItem.id}')" title="삭제">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
   }
 
   // 교리 상세 내용 URL 저장 처리
@@ -2020,17 +2058,23 @@ export class BibleMeditationApp {
     }
 
     if (this.doctrineModel.saveDoctrineUrl(doctrineId, url)) {
-      // 모달 닫기
-      const modal = document.querySelector('.doctrine-url-modal');
-      if (modal) {
-        modal.remove();
-      }
-
-      // 교리 목록 새로고침
-      this.refreshCurrentView();
-
+      // 입력 필드 초기화
+      urlInput.value = '';
+      
+      // URL 목록 업데이트
+      this.updateUrlList(doctrineId);
+      
       // 성공 메시지 표시
-      notificationManager.showSuccess('URL이 저장되었습니다. 이제 상세 내용 버튼을 클릭하면 해당 페이지로 이동합니다.');
+      notificationManager.showSuccess('URL이 저장되었습니다.');
+    }
+  }
+
+  // URL 목록 업데이트
+  updateUrlList(doctrineId) {
+    const urlListContainer = document.getElementById(`urlList-${doctrineId}`);
+    if (urlListContainer) {
+      const urlList = this.doctrineModel.getDoctrineUrlList(doctrineId);
+      urlListContainer.innerHTML = this.getUrlListHTML(doctrineId, urlList);
     }
   }
 

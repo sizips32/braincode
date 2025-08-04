@@ -1125,13 +1125,16 @@ export class BibleMeditationApp {
             </div>
           </div>
           <div class="prayer-item-actions">
-            <button class="btn-edit" data-action="edit-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('edit-prayer', '${type}', ${prayer.id})">
+            <button class="btn-view" data-action="view-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('view-prayer', '${type}', ${prayer.id})" title="전체 보기">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-edit" data-action="edit-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('edit-prayer', '${type}', ${prayer.id})" title="수정">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-delete" data-action="delete-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('delete-prayer', '${type}', ${prayer.id})">
+            <button class="btn-delete" data-action="delete-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('delete-prayer', '${type}', ${prayer.id})" title="삭제">
               <i class="fas fa-trash"></i>
             </button>
-            <button class="btn-answer" data-action="toggle-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('toggle-prayer', '${type}', ${prayer.id})">
+            <button class="btn-answer" data-action="toggle-prayer" data-id="${prayer.id}" data-type="${type}" onclick="handlePrayerAction('toggle-prayer', '${type}', ${prayer.id})" title="${prayer.answered ? '응답 취소' : '응답 완료'}">
               <i class="fas ${prayer.answered ? 'fa-times-circle' : 'fa-check-circle'}"></i>
             </button>
           </div>
@@ -1395,10 +1398,13 @@ export class BibleMeditationApp {
         <div class="prophecy-header">
           <h3 class="prophecy-title">${Utils.escapeHtml(prophecy.title)}</h3>
           <div class="prophecy-actions">
-            <button class="btn-edit" onclick="handleProphecyAction('edit-prophecy', ${prophecy.id})">
+            <button class="btn-view" onclick="handleProphecyAction('view-prophecy', ${prophecy.id})" title="전체 보기">
+              <i class="fas fa-eye"></i>
+            </button>
+            <button class="btn-edit" onclick="handleProphecyAction('edit-prophecy', ${prophecy.id})" title="수정">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-delete" onclick="handleProphecyAction('delete-prophecy', ${prophecy.id})">
+            <button class="btn-delete" onclick="handleProphecyAction('delete-prophecy', ${prophecy.id})" title="삭제">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -1908,6 +1914,9 @@ export class BibleMeditationApp {
       case 'new-prophecy':
         this.showProphecyForm();
         break;
+      case 'view-prophecy':
+        this.showProphecyDetail(prophecyId);
+        break;
       case 'edit-prophecy':
         this.showProphecyForm(prophecyId);
         break;
@@ -2157,6 +2166,106 @@ export class BibleMeditationApp {
     });
   }
 
+  // 기도 상세 보기 모달
+  showPrayerDetail(prayerId, type) {
+    const prayer = this.prayerModel.getById(prayerId, type);
+    if (!prayer) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'prayer-detail-modal';
+    modal.innerHTML = `
+      <div class="prayer-detail-content">
+        <div class="prayer-detail-header">
+          <h2>기도 상세 보기</h2>
+          <button class="btn-close" onclick="this.closest('.prayer-detail-modal').remove()">×</button>
+        </div>
+        <div class="prayer-detail-body">
+          <div class="prayer-detail-info">
+            <div class="prayer-detail-type">
+              <i class="fas fa-pray"></i>
+              ${type === 'meditation' ? '묵상 기도' : type === 'intercessory' ? '중보 기도' : '일반 기도'}
+            </div>
+            <div class="prayer-detail-date">
+              <i class="fas fa-calendar"></i>
+              ${Utils.formatDate(prayer.createdAt)}
+            </div>
+            <div class="prayer-detail-status ${prayer.answered ? 'answered' : 'ongoing'}">
+              <i class="fas ${prayer.answered ? 'fa-check-circle' : 'fa-clock'}"></i>
+              ${prayer.answered ? '✨ 응답됨' : '🙏 진행중'}
+            </div>
+          </div>
+          
+          <div class="prayer-detail-section">
+            <h3>📝 기도 제목</h3>
+            <div class="prayer-detail-title">
+              ${Utils.escapeHtml(prayer.title)}
+            </div>
+          </div>
+          
+          ${type === 'intercessory' && prayer.target ? `
+            <div class="prayer-detail-section">
+              <h3>🙏 기도 대상</h3>
+              <div class="prayer-detail-target">
+                ${Utils.escapeHtml(prayer.target)}
+              </div>
+            </div>
+          ` : ''}
+          
+          <div class="prayer-detail-section">
+            <h3>💭 기도 내용</h3>
+            <div class="prayer-detail-content">
+              ${Utils.escapeHtml(prayer.content)}
+            </div>
+          </div>
+          
+          ${prayer.category ? `
+            <div class="prayer-detail-section">
+              <h3>🏷️ 카테고리</h3>
+              <div class="prayer-detail-category">
+                ${Utils.escapeHtml(prayer.category)}
+              </div>
+            </div>
+          ` : ''}
+          
+          ${prayer.answered && prayer.answeredAt ? `
+            <div class="prayer-detail-section">
+              <h3>✨ 응답 일시</h3>
+              <div class="prayer-detail-answered-at">
+                ${Utils.formatDate(prayer.answeredAt)}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="prayer-detail-actions">
+          <button class="btn-secondary" onclick="this.closest('.prayer-detail-modal').remove()">닫기</button>
+          <button class="btn-primary" onclick="handlePrayerAction('edit-prayer', '${type}', ${prayer.id})">수정하기</button>
+          <button class="btn-answer" onclick="handlePrayerAction('toggle-prayer', '${type}', ${prayer.id})">
+            <i class="fas ${prayer.answered ? 'fa-times-circle' : 'fa-check-circle'}"></i>
+            ${prayer.answered ? '응답 취소' : '응답 완료'}
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 외부 클릭 시 닫기
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
+    });
+    
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function closeOnEscape(event) {
+      if (event.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', closeOnEscape);
+      }
+    });
+  }
+
   // 교리 상세 내용 URL 저장 처리
   handleDoctrineUrlSave(doctrineId) {
     // doctrineId를 숫자로 변환
@@ -2312,6 +2421,97 @@ export class BibleMeditationApp {
       modal.style.display = 'none';
       this.clearProphecyForm();
     }
+  }
+
+  // 예언 상세 보기 모달
+  showProphecyDetail(prophecyId) {
+    const prophecy = this.prophecyModel.getById(prophecyId);
+    if (!prophecy) return;
+
+    const modal = document.createElement('div');
+    modal.className = 'prophecy-detail-modal';
+    modal.innerHTML = `
+      <div class="prophecy-detail-content">
+        <div class="prophecy-detail-header">
+          <h2>예언 상세 보기</h2>
+          <button class="btn-close" onclick="this.closest('.prophecy-detail-modal').remove()">×</button>
+        </div>
+        <div class="prophecy-detail-body">
+          <div class="prophecy-detail-info">
+            <div class="prophecy-detail-author">
+              <i class="fas fa-user"></i>
+              ${Utils.escapeHtml(prophecy.author || '저자 미상')}
+            </div>
+            <div class="prophecy-detail-category">
+              <i class="fas fa-tag"></i>
+              ${Utils.escapeHtml(prophecy.category)}
+            </div>
+            <div class="prophecy-detail-date">
+              <i class="fas fa-calendar"></i>
+              ${Utils.formatDate(new Date(prophecy.createdAt))}
+            </div>
+          </div>
+          
+          <div class="prophecy-detail-section">
+            <h3>📖 예언 제목</h3>
+            <div class="prophecy-detail-title">
+              ${Utils.escapeHtml(prophecy.title)}
+            </div>
+          </div>
+          
+          <div class="prophecy-detail-section">
+            <h3>💭 예언 내용</h3>
+            <div class="prophecy-detail-content">
+              ${Utils.escapeHtml(prophecy.content)}
+            </div>
+          </div>
+          
+          <div class="prophecy-detail-section">
+            <h3>📚 출처</h3>
+            <div class="prophecy-detail-source">
+              ${Utils.escapeHtml(prophecy.source)}
+            </div>
+          </div>
+          
+          ${prophecy.tags && prophecy.tags.length > 0 ? `
+            <div class="prophecy-detail-section">
+              <h3>🏷️ 태그</h3>
+              <div class="prophecy-detail-tags">
+                ${prophecy.tags.map(tag => `<span class="tag">${Utils.escapeHtml(tag)}</span>`).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="prophecy-detail-actions">
+          <button class="btn-secondary" onclick="this.closest('.prophecy-detail-modal').remove()">닫기</button>
+          <button class="btn-primary" onclick="handleProphecyAction('edit-prophecy', ${prophecy.id})">수정하기</button>
+          <button class="btn-meditation" onclick="handleProphecyAction('meditation-from-prophecy', ${prophecy.id})">
+            <i class="fas fa-pen"></i> 묵상하기
+          </button>
+          <button class="btn-prayer" onclick="handleProphecyAction('prayer-from-prophecy', ${prophecy.id})">
+            <i class="fas fa-pray"></i> 기도하기
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // 모달 외부 클릭 시 닫기
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
+    });
+    
+    // ESC 키로 닫기
+    document.addEventListener('keydown', function closeOnEscape(event) {
+      if (event.key === 'Escape') {
+        modal.remove();
+        document.removeEventListener('keydown', closeOnEscape);
+      }
+    });
   }
 
   // 예언 폼 제출 처리

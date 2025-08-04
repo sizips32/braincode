@@ -145,6 +145,9 @@ window.handlePrayerAction = (action, type, id = null) => {
             case 'new-prayer':
                 window.app.showPrayerForm(type);
                 break;
+            case 'view-prayer':
+                window.app.showPrayerDetail(id, type);
+                break;
             case 'edit-prayer':
                 window.app.editPrayer(id, type);
                 break;

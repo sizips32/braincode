@@ -8,13 +8,14 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "python3 server.py 5001",
-    "start": "python3 server.py 5001",
+    "dev": "python3 -m http.server 8001",
+    "start": "python3 -m http.server 8001",
     "build": "echo 'Static site, no build required'",
-    "serve": "python3 server.py 5001",
-    "serve-python": "python server.py 5001",
-    "serve-legacy": "python3 -m http.server 5001",
-    "serve-node": "npx http-server -p 5001 -o -c-1 --cors"
+    "serve": "python3 -m http.server 8001",
+    "serve-python": "python3 -m http.server 8001",
+    "serve-legacy": "python3 -m http.server 8001",
+    "serve-node": "npx http-server -p 8001 -o -c-1 --cors",
+    "server": "python3 server.py 5001"
   },
   "keywords": [
     "bible",

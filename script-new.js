@@ -1,15 +1,20 @@
 import { BibleMeditationApp } from './app/App.js';
 
 // 애플리케이션 초기화
-document.addEventListener('DOMContentLoaded', () => {
+function initializeApp() {
+    console.log('=== 앱 초기화 시작 ===');
+    console.log('DOM 준비 상태:', document.readyState);
+    
     try {
         // 애플리케이션 인스턴스 생성
+        console.log('BibleMeditationApp 인스턴스 생성 중...');
         window.app = new BibleMeditationApp();
+        console.log('BibleMeditationApp 인스턴스 생성 완료');
 
         // 직접적인 네비게이션 이벤트 리스너 추가
         setupNavigationListeners();
 
-        console.log('성경 묵상 앱이 성공적으로 초기화되었습니다.');
+        console.log('=== 앱 초기화 완료 ===');
     } catch (error) {
         console.error('애플리케이션 초기화 중 오류 발생:', error);
 
@@ -43,30 +48,65 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.body.appendChild(errorMessage);
     }
-});
+}
+
+// DOM이 이미 로드되었는지 확인하고 초기화
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    // DOM이 이미 로드되었으면 바로 초기화
+    initializeApp();
+}
 
 // 네비게이션 이벤트 리스너 설정
 function setupNavigationListeners() {
+    console.log('=== 네비게이션 리스너 설정 시작 ===');
+    
     const navLinks = document.querySelectorAll('.nav-link[data-view]');
-    console.log('설정할 네비게이션 링크:', navLinks.length);
+    console.log('찾은 네비게이션 링크 수:', navLinks.length);
+    
+    if (navLinks.length === 0) {
+        console.warn('네비게이션 링크를 찾을 수 없습니다. 1초 후 재시도...');
+        setTimeout(() => {
+            setupNavigationListeners();
+        }, 1000);
+        return;
+    }
 
-    navLinks.forEach(link => {
-        // 기존 onclick 이벤트 제거
+    navLinks.forEach((link, index) => {
+        // 기존 이벤트 리스너 제거
         link.removeAttribute('onclick');
+        
+        // 클론을 만들어서 기존 이벤트 리스너 완전히 제거
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
 
-        link.addEventListener('click', (event) => {
+        newLink.addEventListener('click', (event) => {
             event.preventDefault();
+            event.stopPropagation();
+            
             const view = event.currentTarget.dataset.view;
-            console.log('네비게이션 클릭됨:', view, '링크:', event.currentTarget);
+            console.log(`=== 네비게이션 클릭: ${view} ===`);
 
             if (window.app && view) {
-                console.log('앱 인스턴스 존재, navigateToView 호출');
-                window.app.navigateToView(view, event);
+                try {
+                    window.app.navigateToView(view, event);
+                    console.log('navigateToView 호출 완료');
+                } catch (error) {
+                    console.error('navigateToView 호출 중 오류:', error);
+                }
             } else {
-                console.error('앱 인스턴스가 없거나 view가 없음:', { app: !!window.app, view });
+                console.error('앱 인스턴스가 없거나 view가 없음:', { 
+                    app: !!window.app, 
+                    view: view
+                });
             }
         });
+        
+        console.log(`링크 ${index + 1} 등록 완료:`, newLink.dataset.view);
     });
+    
+    console.log('=== 네비게이션 리스너 설정 완료 ===');
 }
 
 // 전역 함수들 (기존 코드와의 호환성을 위해)

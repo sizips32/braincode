@@ -23,6 +23,11 @@ export class ChurchEventModel {
         return this.events;
     }
 
+    // ID로 특정 이벤트 가져오기
+    getById(id) {
+        return this.events.find(event => event.id === parseInt(id));
+    }
+
     // 특정 날짜의 이벤트 가져오기
     getByDate(date) {
         return this.events.filter(event => event.date === date);

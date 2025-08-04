@@ -19,7 +19,7 @@ export class ProphecyModel {
             }
         } catch (error) {
             console.error('예언 데이터 로드 실패:', error);
-            notificationManager.showError('예언 데이터를 불러오는데 실패했습니다.');
+            notificationManager.error('예언 데이터를 불러오는데 실패했습니다.');
         }
     }
 
@@ -28,7 +28,7 @@ export class ProphecyModel {
             localStorage.setItem(this.storageKey, JSON.stringify(this.prophecies));
         } catch (error) {
             console.error('예언 데이터 저장 실패:', error);
-            notificationManager.showError('예언 데이터를 저장하는데 실패했습니다.');
+            notificationManager.error('예언 데이터를 저장하는데 실패했습니다.');
         }
     }
 
@@ -56,11 +56,11 @@ export class ProphecyModel {
 
             this.prophecies.push(prophecy);
             this.save();
-            notificationManager.showSuccess('예언 글이 성공적으로 저장되었습니다.');
+            notificationManager.success('예언 글이 성공적으로 저장되었습니다.');
             return true;
         } catch (error) {
             console.error('예언 저장 실패:', error);
-            notificationManager.showError('예언 글을 저장하는데 실패했습니다.');
+            notificationManager.error('예언 글을 저장하는데 실패했습니다.');
             return false;
         }
     }
@@ -74,7 +74,7 @@ export class ProphecyModel {
                 updatedAt: new Date().toISOString()
             };
             this.save();
-            notificationManager.showSuccess('예언 글이 성공적으로 수정되었습니다.');
+            notificationManager.success('예언 글이 성공적으로 수정되었습니다.');
             return true;
         }
         return false;
@@ -85,7 +85,7 @@ export class ProphecyModel {
         if (index !== -1) {
             this.prophecies.splice(index, 1);
             this.save();
-            notificationManager.showSuccess('예언 글이 성공적으로 삭제되었습니다.');
+            notificationManager.success('예언 글이 성공적으로 삭제되었습니다.');
             return true;
         }
         return false;
@@ -163,13 +163,13 @@ export class ProphecyModel {
             if (data.prophecies && Array.isArray(data.prophecies)) {
                 this.prophecies = data.prophecies;
                 this.save();
-                notificationManager.showSuccess('예언 데이터가 성공적으로 가져와졌습니다.');
+                notificationManager.success('예언 데이터가 성공적으로 가져와졌습니다.');
                 return true;
             }
             return false;
         } catch (error) {
             console.error('예언 데이터 가져오기 실패:', error);
-            notificationManager.showError('예언 데이터를 가져오는데 실패했습니다.');
+            notificationManager.error('예언 데이터를 가져오는데 실패했습니다.');
             return false;
         }
     }

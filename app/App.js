@@ -12,6 +12,14 @@ import { ProphecyModel } from './models/ProphecyModel.js';
 
 export class BibleMeditationApp {
   constructor() {
+    console.log('=== BibleMeditationApp 생성자 시작 ===');
+    console.log('Utils 모듈 상태:', {
+      'Utils 존재': !!Utils,
+      'Utils 타입': typeof Utils,
+      'Utils.paginate 존재': !!(Utils && Utils.paginate),
+      'Utils.generatePaginationHTML 존재': !!(Utils && Utils.generatePaginationHTML)
+    });
+    
     this.currentView = 'home';
     this.meditationModel = new MeditationModel();
     this.meditationPrayerModel = new PrayerModel('meditation');
@@ -87,9 +95,13 @@ export class BibleMeditationApp {
 
   // 뷰 네비게이션
   navigateToView(view, event) {
-    if (!view) return;
+    if (!view) {
+      console.error('navigateToView: view가 없습니다');
+      return;
+    }
 
     console.log('navigateToView 호출됨:', view);
+    console.log('현재 뷰:', this.currentView);
 
     // 네비게이션 활성화 상태 업데이트
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -125,9 +137,14 @@ export class BibleMeditationApp {
         this.showSearchView();
         break;
       case 'church-events':
-        console.log('교회 행사와 사역 뷰로 이동 시작');
-        this.showChurchEventsView();
-        console.log('교회 행사와 사역 뷰로 이동 완료');
+        console.log('=== 교회 행사와 사역 뷰로 이동 시작 ===');
+        console.log('showChurchEventsView 메서드 타입:', typeof this.showChurchEventsView);
+        try {
+          this.showChurchEventsView();
+          console.log('=== 교회 행사와 사역 뷰로 이동 완료 ===');
+        } catch (error) {
+          console.error('교회 행사 뷰 전환 중 오류:', error);
+        }
         break;
       case 'doctrine':
         console.log('교리 뷰로 이동');
@@ -549,11 +566,24 @@ export class BibleMeditationApp {
   showChurchEventsView() {
     console.log('showChurchEventsView 함수 시작');
     
-    const container = document.querySelector('.meditation-container');
-    const calendarContainer = document.querySelector('.calendar');
-    
-    console.log('컨테이너 찾음:', !!container);
-    console.log('캘린더 컨테이너 찾음:', !!calendarContainer);
+    try {
+      const container = document.querySelector('.meditation-container');
+      const calendarContainer = document.querySelector('.calendar');
+      
+      console.log('컨테이너 찾음:', !!container);
+      console.log('캘린더 컨테이너 찾음:', !!calendarContainer);
+      
+      if (!container) {
+        console.error('meditation-container를 찾을 수 없습니다');
+        notificationManager.error('페이지 컨테이너를 찾을 수 없습니다');
+        return;
+      }
+      
+      if (!calendarContainer) {
+        console.error('calendar 컨테이너를 찾을 수 없습니다');
+        notificationManager.error('달력 컨테이너를 찾을 수 없습니다');
+        return;
+      }
 
     // 기존 묵상 캘린더 숨기기
     if (this.calendar) {
@@ -589,9 +619,13 @@ export class BibleMeditationApp {
       console.log('기존 ChurchEventCalendar 인스턴스 사용');
     }
 
-    console.log('교회 캘린더 이벤트 업데이트 중...');
-    this.updateChurchCalendarEvents();
-    console.log('showChurchEventsView 함수 완료');
+      console.log('교회 캘린더 이벤트 업데이트 중...');
+      this.updateChurchCalendarEvents();
+      console.log('showChurchEventsView 함수 완료');
+    } catch (error) {
+      console.error('교회 행사 뷰 표시 중 오류:', error);
+      notificationManager.error('교회 행사 페이지를 로드하는 중 오류가 발생했습니다: ' + error.message);
+    }
   }
 
   // 교리 뷰 표시
@@ -1145,7 +1179,34 @@ export class BibleMeditationApp {
 
     // 페이지네이션 적용
     const { page, perPage } = this.paginationState.prayer;
-    const paginationInfo = Utils.pagination.paginate(sortedPrayers, page, perPage);
+    let paginationInfo;
+    
+         try {
+       if (Utils && typeof Utils.paginate === 'function') {
+         paginationInfo = Utils.paginate(sortedPrayers, page, perPage);
+       } else {
+         throw new Error('Utils.paginate 함수가 사용 불가능');
+       }
+     } catch (error) {
+      console.error('기도 페이지네이션 오류:', error);
+      
+      // 폴백 페이지네이션 구현
+      const itemsPerPage = perPage || 10;
+      const currentPage = page || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalPages = Math.ceil(sortedPrayers.length / itemsPerPage);
+      
+      paginationInfo = {
+        items: sortedPrayers.slice(startIndex, endIndex),
+        totalItems: sortedPrayers.length,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        perPage: itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      };
+    }
 
     let html = paginationInfo.items.map(prayer => `
       <div class="prayer-item ${prayer.answered ? 'prayer-answered' : ''}" data-id="${prayer.id}">
@@ -1182,10 +1243,30 @@ export class BibleMeditationApp {
     `).join('');
 
     // 페이지네이션 HTML 추가
-    const paginationHTML = Utils.pagination.generatePaginationHTML(
-      paginationInfo, 
-      'handlePrayerPageChange'
-    );
+    let paginationHTML = '';
+         try {
+       if (Utils && typeof Utils.generatePaginationHTML === 'function') {
+         paginationHTML = Utils.generatePaginationHTML(
+           paginationInfo, 
+           'handlePrayerPageChange'
+         );
+       } else {
+         console.warn('Utils.generatePaginationHTML 함수를 사용할 수 없습니다.');
+        // 간단한 페이지네이션 HTML 생성
+        if (paginationInfo.totalPages > 1) {
+          paginationHTML = `
+            <div class="pagination">
+              ${paginationInfo.hasPrevPage ? `<button onclick="handlePrayerPageChange(${paginationInfo.currentPage - 1})">이전</button>` : ''}
+              <span>페이지 ${paginationInfo.currentPage} / ${paginationInfo.totalPages}</span>
+              ${paginationInfo.hasNextPage ? `<button onclick="handlePrayerPageChange(${paginationInfo.currentPage + 1})">다음</button>` : ''}
+            </div>
+          `;
+        }
+      }
+    } catch (error) {
+      console.error('페이지네이션 HTML 생성 오류:', error);
+      paginationHTML = '';
+    }
 
     // 전체 개수 표시
     html += `
@@ -1244,7 +1325,34 @@ export class BibleMeditationApp {
 
     // 페이지네이션 적용
     const { page, perPage } = this.paginationState.meditation;
-    const paginationInfo = Utils.pagination.paginate(sortedMeditations, page, perPage);
+    let paginationInfo;
+    
+         try {
+       if (Utils && typeof Utils.paginate === 'function') {
+         paginationInfo = Utils.paginate(sortedMeditations, page, perPage);
+       } else {
+         throw new Error('Utils.paginate 함수가 사용 불가능');
+       }
+     } catch (error) {
+      console.error('묵상 페이지네이션 오류:', error);
+      
+      // 폴백 페이지네이션 구현
+      const itemsPerPage = perPage || 10;
+      const currentPage = page || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalPages = Math.ceil(sortedMeditations.length / itemsPerPage);
+      
+      paginationInfo = {
+        items: sortedMeditations.slice(startIndex, endIndex),
+        totalItems: sortedMeditations.length,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        perPage: itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      };
+    }
 
     let html = paginationInfo.items.map(meditation => `
       <div class="meditation-item" data-id="${meditation.id}">
@@ -1271,10 +1379,30 @@ export class BibleMeditationApp {
     `).join('');
 
     // 페이지네이션 HTML 추가
-    const paginationHTML = Utils.pagination.generatePaginationHTML(
-      paginationInfo, 
-      'handleMeditationPageChange'
-    );
+    let paginationHTML = '';
+         try {
+       if (Utils && typeof Utils.generatePaginationHTML === 'function') {
+         paginationHTML = Utils.generatePaginationHTML(
+           paginationInfo, 
+           'handleMeditationPageChange'
+         );
+       } else {
+         console.warn('Utils.generatePaginationHTML 함수를 사용할 수 없습니다.');
+        // 간단한 페이지네이션 HTML 생성
+        if (paginationInfo.totalPages > 1) {
+          paginationHTML = `
+            <div class="pagination">
+              ${paginationInfo.hasPrevPage ? `<button onclick="handleMeditationPageChange(${paginationInfo.currentPage - 1})">이전</button>` : ''}
+              <span>페이지 ${paginationInfo.currentPage} / ${paginationInfo.totalPages}</span>
+              ${paginationInfo.hasNextPage ? `<button onclick="handleMeditationPageChange(${paginationInfo.currentPage + 1})">다음</button>` : ''}
+            </div>
+          `;
+        }
+      }
+    } catch (error) {
+      console.error('묵상 페이지네이션 HTML 생성 오류:', error);
+      paginationHTML = '';
+    }
 
     // 전체 개수 표시
     html += `
@@ -1312,7 +1440,45 @@ export class BibleMeditationApp {
 
     // 페이지네이션 적용
     const { page, perPage } = this.paginationState.churchEvent;
-    const paginationInfo = Utils.pagination.paginate(sortedEvents, page, perPage);
+        console.log('=== 페이지네이션 디버깅 ===');
+    console.log('Utils 존재:', !!Utils);
+    console.log('Utils.paginate 존재:', !!(Utils && Utils.paginate));
+    console.log('page:', page, 'perPage:', perPage);
+    console.log('sortedEvents 길이:', sortedEvents.length);
+    
+    let paginationInfo;
+    
+    // 더 안전한 체크
+         try {
+       if (Utils && typeof Utils.paginate === 'function') {
+         console.log('페이지네이션 함수 사용');
+         paginationInfo = Utils.paginate(sortedEvents, page, perPage);
+         console.log('페이지네이션 결과:', paginationInfo);
+       } else {
+         throw new Error('Utils.paginate 함수가 사용 불가능');
+       }
+     } catch (error) {
+      console.error('페이지네이션 오류:', error);
+      console.log('폴백 페이지네이션 사용');
+      
+      // 폴백 페이지네이션 구현
+      const itemsPerPage = perPage || 10;
+      const currentPage = page || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalPages = Math.ceil(sortedEvents.length / itemsPerPage);
+      
+      paginationInfo = {
+        items: sortedEvents.slice(startIndex, endIndex),
+        totalItems: sortedEvents.length,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        perPage: itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      };
+      console.log('폴백 페이지네이션 결과:', paginationInfo);
+    }
 
     let html = paginationInfo.items.map(event => `
       <div class="church-event-item" data-id="${event.id}">
@@ -1344,10 +1510,30 @@ export class BibleMeditationApp {
     `).join('');
 
     // 페이지네이션 HTML 추가
-    const paginationHTML = Utils.pagination.generatePaginationHTML(
-      paginationInfo, 
-      'handleChurchEventPageChange'
-    );
+    let paginationHTML = '';
+         try {
+       if (Utils && typeof Utils.generatePaginationHTML === 'function') {
+         paginationHTML = Utils.generatePaginationHTML(
+           paginationInfo, 
+           'handleChurchEventPageChange'
+         );
+       } else {
+         console.warn('Utils.generatePaginationHTML 함수를 사용할 수 없습니다.');
+        // 간단한 페이지네이션 HTML 생성
+        if (paginationInfo.totalPages > 1) {
+          paginationHTML = `
+            <div class="pagination">
+              ${paginationInfo.hasPrevPage ? `<button onclick="handleChurchEventPageChange(${paginationInfo.currentPage - 1})">이전</button>` : ''}
+              <span>페이지 ${paginationInfo.currentPage} / ${paginationInfo.totalPages}</span>
+              ${paginationInfo.hasNextPage ? `<button onclick="handleChurchEventPageChange(${paginationInfo.currentPage + 1})">다음</button>` : ''}
+            </div>
+          `;
+        }
+      }
+    } catch (error) {
+      console.error('교회 행사 페이지네이션 HTML 생성 오류:', error);
+      paginationHTML = '';
+    }
 
     // 전체 개수 표시
     html += `
@@ -1494,7 +1680,34 @@ export class BibleMeditationApp {
 
     // 페이지네이션 적용
     const { page, perPage } = this.paginationState.prophecy;
-    const paginationInfo = Utils.pagination.paginate(sortedProphecies, page, perPage);
+    let paginationInfo;
+    
+    try {
+      if (Utils && typeof Utils.paginate === 'function') {
+        paginationInfo = Utils.paginate(sortedProphecies, page, perPage);
+      } else {
+        throw new Error('Utils.paginate 함수가 사용 불가능');
+      }
+    } catch (error) {
+      console.error('예언 페이지네이션 오류:', error);
+      
+      // 폴백 페이지네이션 구현
+      const itemsPerPage = perPage || 10;
+      const currentPage = page || 1;
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const totalPages = Math.ceil(sortedProphecies.length / itemsPerPage);
+      
+      paginationInfo = {
+        items: sortedProphecies.slice(startIndex, endIndex),
+        totalItems: sortedProphecies.length,
+        totalPages: totalPages,
+        currentPage: currentPage,
+        perPage: itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      };
+    }
 
     let html = paginationInfo.items.map(prophecy => `
       <div class="prophecy-item" data-id="${prophecy.id}">
@@ -1540,10 +1753,30 @@ export class BibleMeditationApp {
     `).join('');
 
     // 페이지네이션 HTML 추가
-    const paginationHTML = Utils.pagination.generatePaginationHTML(
-      paginationInfo, 
-      'handleProphecyPageChange'
-    );
+    let paginationHTML = '';
+    try {
+      if (Utils && typeof Utils.generatePaginationHTML === 'function') {
+        paginationHTML = Utils.generatePaginationHTML(
+          paginationInfo, 
+          'handleProphecyPageChange'
+        );
+      } else {
+        console.warn('Utils.generatePaginationHTML 함수를 사용할 수 없습니다.');
+        // 간단한 페이지네이션 HTML 생성
+        if (paginationInfo.totalPages > 1) {
+          paginationHTML = `
+            <div class="pagination">
+              ${paginationInfo.hasPrevPage ? `<button onclick="handleProphecyPageChange(${paginationInfo.currentPage - 1})">이전</button>` : ''}
+              <span>페이지 ${paginationInfo.currentPage} / ${paginationInfo.totalPages}</span>
+              ${paginationInfo.hasNextPage ? `<button onclick="handleProphecyPageChange(${paginationInfo.currentPage + 1})">다음</button>` : ''}
+            </div>
+          `;
+        }
+      }
+    } catch (error) {
+      console.error('예언 페이지네이션 HTML 생성 오류:', error);
+      paginationHTML = '';
+    }
 
     // 전체 개수 표시
     html += `
@@ -1578,6 +1811,11 @@ export class BibleMeditationApp {
       console.log('성경 책 클릭됨:', bookName);
       this.showMeditationForm(null, bookName);
     });
+  }
+
+  attachBibleDetailEvents() {
+    // 성경 상세 페이지 이벤트 (묵상 편집/삭제 등)
+    console.log('성경 상세 이벤트 리스너 연결됨');
   }
 
   attachSearchViewEvents() {

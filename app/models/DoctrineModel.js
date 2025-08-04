@@ -263,7 +263,7 @@ export class DoctrineModel {
             }
         } catch (error) {
             console.error('교리 데이터 로드 실패:', error);
-            notificationManager.showError('교리 데이터를 불러오는데 실패했습니다.');
+            notificationManager.error('교리 데이터를 불러오는데 실패했습니다.');
         }
     }
 
@@ -272,7 +272,7 @@ export class DoctrineModel {
             localStorage.setItem(this.storageKey, JSON.stringify(this.doctrines));
         } catch (error) {
             console.error('교리 데이터 저장 실패:', error);
-            notificationManager.showError('교리 데이터를 저장하는데 실패했습니다.');
+            notificationManager.error('교리 데이터를 저장하는데 실패했습니다.');
         }
     }
 
@@ -320,7 +320,7 @@ export class DoctrineModel {
             const existingUrl = this.doctrines[index].urlList.find(item => item.url === url);
             if (existingUrl) {
                 console.log('중복 URL 발견:', url);
-                notificationManager.showError('이미 저장된 URL입니다.');
+                notificationManager.error('이미 저장된 URL입니다.');
                 return false;
             }
             
@@ -342,7 +342,7 @@ export class DoctrineModel {
             this.save();
             console.log('URL 저장 완료, 현재 목록:', this.doctrines[index].urlList);
             
-            notificationManager.showSuccess('URL이 저장되었습니다.');
+            notificationManager.success('URL이 저장되었습니다.');
             return true;
         }
         
@@ -384,7 +384,7 @@ export class DoctrineModel {
             }
             
             this.save();
-            notificationManager.showSuccess('URL이 삭제되었습니다.');
+            notificationManager.success('URL이 삭제되었습니다.');
             return true;
         }
         return false;
@@ -417,7 +417,7 @@ export class DoctrineModel {
     resetToDefault() {
         this.doctrines = this.getDefaultDoctrines();
         this.save();
-        notificationManager.showSuccess('교리가 기본값으로 초기화되었습니다.');
+        notificationManager.success('교리가 기본값으로 초기화되었습니다.');
     }
 
     exportData() {
@@ -433,13 +433,13 @@ export class DoctrineModel {
             if (data.doctrines && Array.isArray(data.doctrines)) {
                 this.doctrines = data.doctrines;
                 this.save();
-                notificationManager.showSuccess('교리 데이터가 성공적으로 가져와졌습니다.');
+                notificationManager.success('교리 데이터가 성공적으로 가져와졌습니다.');
                 return true;
             }
             return false;
         } catch (error) {
             console.error('교리 데이터 가져오기 실패:', error);
-            notificationManager.showError('교리 데이터를 가져오는데 실패했습니다.');
+            notificationManager.error('교리 데이터를 가져오는데 실패했습니다.');
             return false;
         }
     }
